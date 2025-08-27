@@ -19,7 +19,7 @@
 **Configurazione:**
 ```yaml
 buildCommand: npm run install-all
-startCommand: npm start
+startCommand: cd server && node src/server.js
 ```
 
 ### 2. Verifica della Struttura
@@ -39,6 +39,15 @@ fantacalcio-pro/
 ```
 
 ### 3. Script di Avvio
+
+Il `package.json` della root contiene lo script corretto:
+```json
+{
+  "scripts": {
+    "start": "cd server && node src/server.js"
+  }
+}
+```
 
 Il `server/package.json` contiene lo script corretto:
 ```json
