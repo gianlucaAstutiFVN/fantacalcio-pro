@@ -20,7 +20,11 @@
     "axios": "^1.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.20.1"
+    "react-router-dom": "^6.20.1",
+    "@vitejs/plugin-react": "^4.2.1",
+    "terser": "^5.43.1",
+    "typescript": "^5.4.3",
+    "vite": "^5.4.19"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
@@ -28,12 +32,8 @@
     "@types/react-dom": "^18.3.7",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
-    "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
-    "terser": "^5.43.1",
-    "typescript": "^5.4.3",
-    "vite": "^5.4.19"
+    "eslint-plugin-react-refresh": "^0.4.5"
   }
 }
