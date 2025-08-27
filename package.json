@@ -2,7 +2,7 @@
   "name": "fantacalcio-asta",
   "version": "1.0.0",
   "description": "Piattaforma per l'asta del fantacalcio",
-  "main": "server/index.js",
+  "main": "server/src/server.js",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd server && npm run dev",
@@ -11,7 +11,8 @@
     "build:client": "cd client && npm run build:prod",
     "build:server": "cd server && npm run build",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
-    "start": "cd server && npm start"
+    "start": "cd server && npm start",
+    "postinstall": "cd server && npm install"
   },
   "keywords": ["fantacalcio", "asta", "calcio"],
   "author": "",

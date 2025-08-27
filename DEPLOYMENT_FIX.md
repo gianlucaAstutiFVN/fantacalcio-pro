@@ -4,22 +4,22 @@
 
 **Errore:** `Error: Cannot find module 'express'`
 
-**Causa:** Il comando di build non installava correttamente le dipendenze del server nella posizione corretta.
+**Causa:** Render stava cercando di eseguire `server/index.js` invece del server modulare in `server/src/server.js`. Il file `server/index.js` era un server legacy che non aveva le dipendenze installate correttamente.
 
 ## Soluzione Implementata
 
-### 1. Modifica al `render.yaml`
+### 1. Rimozione File Legacy
 
-**Prima:**
-```yaml
-buildCommand: cd server && npm install
-startCommand: cd server && npm start
-```
+**Problema:** Il file `server/index.js` era un server legacy che causava confusione nel deployment.
 
-**Dopo:**
+**Soluzione:** Rimosso il file `server/index.js` per evitare conflitti con il server modulare in `server/src/server.js`.
+
+### 2. Modifica al `render.yaml`
+
+**Configurazione:**
 ```yaml
-buildCommand: cd server && npm install
-startCommand: cd server && npm start
+buildCommand: npm run install-all
+startCommand: npm start
 ```
 
 ### 2. Verifica della Struttura
