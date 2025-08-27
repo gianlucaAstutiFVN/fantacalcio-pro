@@ -39,20 +39,20 @@ if (!fs.existsSync(uploadsDir)) {
 // GET /api/giocatori - Lista completa giocatori
 router.get('/', giocatoriController.getAllGiocatori.bind(giocatoriController));
 
-// GET /api/giocatori/in-wishlist - Giocatori in wishlist
-router.get('/in-wishlist', giocatoriController.getGiocatoriInWishlist.bind(giocatoriController));
-
-// GET /api/giocatori/:ruolo - Giocatori per ruolo
-router.get('/:ruolo', giocatoriController.getGiocatoriByRuolo.bind(giocatoriController));
-
-// GET /api/giocatori/:id - Giocatore specifico
-router.get('/:id', giocatoriController.getGiocatoreById.bind(giocatoriController));
+// GET /api/giocatori/wishlist - Giocatori in wishlist
+router.get('/wishlist', giocatoriController.getGiocatoriInWishlist.bind(giocatoriController));
 
 // PATCH /api/giocatori/:id/note - Aggiorna note
 router.patch('/:id/note', giocatoriController.updateNote.bind(giocatoriController));
 
 // PATCH /api/giocatori/:id/fantasquadra - Aggiorna fantasquadra
 router.patch('/:id/fantasquadra', giocatoriController.updateFantasquadra.bind(giocatoriController));
+
+// GET /api/giocatori/:id - Giocatore specifico
+router.get('/:id', giocatoriController.getGiocatoreById.bind(giocatoriController));
+
+// GET /api/giocatori/:ruolo - Giocatori per ruolo
+router.get('/:ruolo', giocatoriController.getGiocatoriByRuolo.bind(giocatoriController));
 
 // POST - Upload CSV per importazione giocatori
 router.post('/upload-csv', upload.single('csv'), giocatoriController.uploadCSV.bind(giocatoriController));

@@ -9,9 +9,18 @@ module.exports = {
   
   // Configurazione CORS
   cors: {
-    origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    origin: process.env.NODE_ENV === 'development' 
+      ? true // Allow all origins in development
+      : (process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [
+          'http://localhost:3000', 
+          'http://127.0.0.1:3000',
+          'http://localhost:5173', // Vite default port
+          'http://127.0.0.1:5173',
+          'http://localhost:4173', // Vite preview port
+          'http://127.0.0.1:4173'
+        ]),
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     optionsSuccessStatus: 200
   },

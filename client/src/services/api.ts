@@ -28,7 +28,7 @@ export const giocatoriAPI = {
 
   // Get giocatori in wishlist
   getInWishlist: async (): Promise<ApiResponse<Giocatore[]>> => {
-    const response = await api.get('/giocatori/in-wishlist')
+    const response = await api.get('/giocatori/wishlist')
     return response.data
   },
 
