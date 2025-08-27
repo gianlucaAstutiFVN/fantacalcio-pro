@@ -177,6 +177,40 @@ class GiocatoriService {
     }
   }
 
+  // Aggiorna valutazione di un giocatore
+  async updateValutazione(id, valutazione) {
+    try {
+      await this.db.connect();
+      
+      // Verifica che il giocatore esista
+      const giocatore = await this.db.get('SELECT id FROM giocatori WHERE id = ?', [id]);
+      if (!giocatore) {
+        return false;
+      }
+
+      // Verifica se esiste già una quotazione per questo giocatore
+      let quotazione = await this.db.get('SELECT id FROM quotazioni WHERE giocatore_id = ?', [id]);
+      
+      if (quotazione) {
+        // Aggiorna la quotazione esistente
+        await this.db.run(
+          'UPDATE quotazioni SET mia_valutazione = ?, updated_at = CURRENT_TIMESTAMP WHERE giocatore_id = ?', 
+          [valutazione, id]
+        );
+      } else {
+        // Crea una nuova quotazione
+        await this.db.run(
+          'INSERT INTO quotazioni (giocatore_id, mia_valutazione, created_at, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)', 
+          [valutazione, id]
+        );
+      }
+      
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Controlla se un giocatore è in wishlist
   async isInWishlist(giocatoreId) {
     try {

@@ -1,5 +1,7 @@
 export const config = {
-  API_BASE_URL: 'https://fantacalcio-pro.onrender.com/api',
+  API_BASE_URL: import.meta.env.DEV 
+    ? 'http://localhost:5000/api' 
+    : 'https://fantacalcio-pro.onrender.com/api',
   
   APP_NAME: 'Fantacalcio Pro',
   APP_VERSION: '1.0.0',

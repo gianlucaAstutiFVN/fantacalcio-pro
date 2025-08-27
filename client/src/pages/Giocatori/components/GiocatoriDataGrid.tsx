@@ -12,12 +12,14 @@ interface GiocatoriDataGridProps {
   giocatori: Giocatore[]
   squadre?: Squadra[]
   onRefresh?: () => void
+  onGiocatoreUpdated?: (giocatore: Giocatore) => void
 }
 
 const GiocatoriDataGrid: React.FC<GiocatoriDataGridProps> = ({
   giocatori,
   squadre,
   onRefresh,
+  onGiocatoreUpdated,
 }) => {
   // Hook personalizzato per gestire tutta la logica
   const {
@@ -48,7 +50,7 @@ const GiocatoriDataGrid: React.FC<GiocatoriDataGridProps> = ({
     handleValutazioneUpdated,
     handleWishlistToggle,
     onRefresh: onRefreshFromHook,
-  } = useGiocatoriDataGrid({ onRefresh })
+  } = useGiocatoriDataGrid({ onRefresh, onGiocatoreUpdated })
 
   // Hook per le colonne
   const columns = useGiocatoriColumns({

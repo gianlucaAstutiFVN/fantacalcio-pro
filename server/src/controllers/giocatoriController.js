@@ -160,6 +160,49 @@ class GiocatoriController {
     }
   }
 
+  // PATCH /api/giocatori/:id/valutazione - Aggiorna valutazione
+  async updateValutazione(req, res) {
+    try {
+      const { id } = req.params;
+      const { valutazione } = req.body;
+      
+      if (valutazione === undefined) {
+        return res.status(400).json({
+          success: false,
+          error: 'Campo "valutazione" richiesto'
+        });
+      }
+      
+      // Validazione: la valutazione deve essere un numero tra 1 e 10 o null
+      if (valutazione !== null && (isNaN(valutazione) || valutazione < 1 || valutazione > 10)) {
+        return res.status(400).json({
+          success: false,
+          error: 'La valutazione deve essere un numero tra 1 e 10'
+        });
+      }
+      
+      const success = await giocatoriService.updateValutazione(id, valutazione);
+      
+      if (!success) {
+        return res.status(404).json({
+          success: false,
+          error: 'Giocatore non trovato'
+        });
+      }
+      
+      res.json({
+        success: true,
+        message: 'Valutazione aggiornata con successo',
+        data: { id, valutazione }
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: 'Errore interno del server'
+      });
+    }
+  }
+
   // POST - Upload CSV per importazione giocatori
   async uploadCSV(req, res) {
     try {

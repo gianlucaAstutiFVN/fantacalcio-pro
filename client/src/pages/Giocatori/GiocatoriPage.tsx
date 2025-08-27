@@ -50,6 +50,13 @@ const GiocatoriPage: React.FC = () => {
   const fetchGiocatori = async () => {
     setLoading(true)
     setError(null)
+    
+    // Timeout di sicurezza per evitare loading infinito
+    const loadingTimeout = setTimeout(() => {
+      setLoading(false)
+      setError('Timeout nel caricamento dei giocatori')
+    }, 10000) // 10 secondi
+    
     try {
       let response
       if (currentRole === 'tutti') {
@@ -75,6 +82,7 @@ const GiocatoriPage: React.FC = () => {
       console.error('Errore fetch giocatori:', err)
       setGiocatori([])
     } finally {
+      clearTimeout(loadingTimeout)
       setLoading(false)
     }
   }
@@ -97,8 +105,6 @@ const GiocatoriPage: React.FC = () => {
   }
 
   const handleRoleChange = (newRole: string) => {
-    setLoading(true)
-    
     // Se il ruolo è effettivamente cambiato, resetta i filtri
     if (newRole !== currentRole) {
       const newSearchParams = new URLSearchParams(searchParams)
@@ -150,8 +156,7 @@ const GiocatoriPage: React.FC = () => {
     }
     setSearchParams(newSearchParams)
     
-    // Wait 1 second before setting loading to false
-    await new Promise(resolve => setTimeout(resolve, 100))
+    // Il loading si ferma immediatamente per i filtri client-side
     setLoading(false)
   }
 
@@ -184,6 +189,17 @@ const GiocatoriPage: React.FC = () => {
 
   const handleRefresh = () => {
     fetchGiocatori()
+  }
+
+  // Callback per aggiornamento ottimistico
+  const handleGiocatoreUpdated = (giocatoreAggiornato: Giocatore) => {
+    setGiocatori(prevGiocatori => 
+      prevGiocatori.map(g => 
+        g.id === giocatoreAggiornato.id 
+          ? { ...g, ...giocatoreAggiornato }
+          : g
+      )
+    )
   }
 
 
@@ -268,6 +284,7 @@ const GiocatoriPage: React.FC = () => {
           giocatori={filteredGiocatori}
           squadre={squadre}
           onRefresh={handleRefresh}
+          onGiocatoreUpdated={handleGiocatoreUpdated}
         />
       )}
 

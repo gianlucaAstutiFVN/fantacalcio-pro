@@ -1,0 +1,293 @@
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  Alert,
+  CircularProgress,
+  Stack,
+  Chip
+} from '@mui/material';
+import {
+  Download as DownloadIcon,
+  Upload as UploadIcon,
+  Storage as StorageIcon
+} from '@mui/icons-material';
+import { config } from '../../config/config';
+
+interface BackupStatus {
+  lastBackup?: string;
+  totalRecords?: number;
+  tables?: string[];
+}
+
+const DatabaseManagementPage: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
+  const [backupStatus, setBackupStatus] = useState<BackupStatus>({});
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // Scarica backup del database
+  const downloadBackup = async () => {
+    setLoading(true);
+    setMessage(null);
+    
+    try {
+      const response = await fetch(`${config.API_BASE_URL}/backup/download`);
+      
+      if (!response.ok) {
+        throw new Error('Errore durante il download del backup');
+      }
+      
+      // Crea blob e scarica
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `fantacalcio-backup-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      setMessage({
+        type: 'success',
+        text: 'Backup scaricato con successo!'
+      });
+      
+      // Aggiorna lo stato
+      await checkDatabaseStatus();
+      
+    } catch (error) {
+      console.error('Errore download backup:', error);
+      setMessage({
+        type: 'error',
+        text: `Errore durante il download: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Carica file di backup
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type === 'text/csv') {
+      setSelectedFile(file);
+      setMessage(null);
+    } else {
+      setMessage({
+        type: 'error',
+        text: 'Seleziona un file CSV valido'
+      });
+    }
+  };
+
+  // Ripristina da backup
+  const restoreBackup = async () => {
+    if (!selectedFile) {
+      setMessage({
+        type: 'error',
+        text: 'Seleziona prima un file di backup'
+      });
+      return;
+    }
+
+    setLoading(true);
+    setMessage(null);
+    
+    try {
+      const formData = new FormData();
+      formData.append('backup', selectedFile);
+      
+      const response = await fetch(`${config.API_BASE_URL}/backup/restore`, {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Errore durante il ripristino');
+      }
+      
+      await response.json();
+      
+      setMessage({
+        type: 'success',
+        text: 'Database ripristinato con successo dal backup!'
+      });
+      
+      // Reset file selezionato
+      setSelectedFile(null);
+      
+      // Aggiorna lo stato
+      await checkDatabaseStatus();
+      
+    } catch (error) {
+      console.error('Errore ripristino backup:', error);
+      setMessage({
+        type: 'error',
+        text: `Errore durante il ripristino: ${error instanceof Error ? error.message : 'Errore sconosciuto'}`
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+  // Controlla stato database
+  const checkDatabaseStatus = async () => {
+    try {
+      const response = await fetch(`${config.API_BASE_URL}/health`);
+      if (response.ok) {
+        await response.json();
+        setBackupStatus({
+          lastBackup: new Date().toISOString(),
+          totalRecords: 0, // TODO: implementare conteggio record
+          tables: ['giocatori', 'quotazioni', 'squadre', 'acquisti', 'wishlist']
+        });
+      }
+    } catch (error) {
+      console.error('Errore controllo stato database:', error);
+    }
+  };
+
+  // Controlla stato al caricamento
+  React.useEffect(() => {
+    checkDatabaseStatus();
+  }, []);
+
+  return (
+    <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
+      <Typography variant="h4" component="h1" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <StorageIcon color="primary" />
+        Gestione Database
+      </Typography>
+      
+      <Typography variant="body1" color="text.secondary" paragraph>
+        Gestisci backup e restore del database. I backup contengono tutti i dati inclusi giocatori, quotazioni, squadre e acquisti.
+      </Typography>
+
+      {/* Messaggi */}
+      {message && (
+        <Alert severity={message.type} sx={{ mb: 3 }}>
+          {message.text}
+        </Alert>
+      )}
+
+      {/* Stato Database */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Stato Database
+          </Typography>
+          <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ mt: 2 }}>
+            {backupStatus.tables?.map((table) => (
+              <Chip key={table} label={table} color="primary" variant="outlined" />
+            ))}
+          </Stack>
+          {backupStatus.lastBackup && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+              Ultimo backup: {new Date(backupStatus.lastBackup).toLocaleString('it-IT')}
+            </Typography>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Operazioni Database */}
+      <Stack spacing={3}>
+        {/* Download Backup */}
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Scarica Backup
+            </Typography>
+            <Typography variant="body2" color="text.secondary" paragraph>
+              Scarica un backup completo del database in formato CSV. Il file conterrà tutti i dati organizzati per tabelle.
+            </Typography>
+            <Button
+              variant="contained"
+              startIcon={<DownloadIcon />}
+              onClick={downloadBackup}
+              disabled={loading}
+              sx={{ minWidth: 200 }}
+            >
+              {loading ? <CircularProgress size={20} /> : 'Scarica Backup'}
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Upload e Restore */}
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Ripristina da Backup
+            </Typography>
+            <Typography variant="body2" color="text.secondary" paragraph>
+              Carica un file di backup CSV per ripristinare il database. ATTENZIONE: questa operazione sovrascriverà tutti i dati esistenti.
+            </Typography>
+            
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+              <Button
+                variant="outlined"
+                component="label"
+                startIcon={<UploadIcon />}
+                disabled={loading}
+              >
+                Seleziona File CSV
+                <input
+                  type="file"
+                  hidden
+                  accept=".csv"
+                  onChange={handleFileSelect}
+                />
+              </Button>
+              
+              {selectedFile && (
+                <Typography variant="body2" color="primary">
+                  {selectedFile.name}
+                </Typography>
+              )}
+            </Stack>
+            
+            <Button
+              variant="contained"
+              color="warning"
+              onClick={restoreBackup}
+              disabled={!selectedFile || loading}
+              sx={{ minWidth: 200 }}
+            >
+              {loading ? <CircularProgress size={20} /> : 'Ripristina Database'}
+            </Button>
+          </CardContent>
+        </Card>
+
+
+      </Stack>
+
+      {/* Informazioni */}
+      <Card sx={{ mt: 3, bgcolor: 'grey.50' }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            ℹ️ Informazioni
+          </Typography>
+          <Typography variant="body2" color="text.secondary" paragraph>
+            • I backup contengono tutti i dati del database organizzati per tabelle
+          </Typography>
+          <Typography variant="body2" color="text.secondary" paragraph>
+            • Il restore sovrascrive completamente il database esistente
+          </Typography>
+
+          <Typography variant="body2" color="text.secondary">
+            • Su Render, il database si resetta ad ogni deployment
+          </Typography>
+        </CardContent>
+      </Card>
+    </Box>
+  );
+};
+
+export default DatabaseManagementPage;

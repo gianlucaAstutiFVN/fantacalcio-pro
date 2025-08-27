@@ -28,7 +28,6 @@ interface UploadResult {
   action: 'created' | 'updated';
   data: any;
   wishlistAdded?: boolean;
-  wishlistRemoved?: boolean;
 }
 
 interface UploadError {
@@ -102,11 +101,10 @@ const QuotazioniUpload: React.FC = () => {
       setUploadResult(response.data);
              // Conta le modifiche alla wishlist
        const wishlistAdded = response.data.data.results.filter((r: any) => r.wishlistAdded).length;
-       const wishlistRemoved = response.data.data.results.filter((r: any) => r.wishlistRemoved).length;
        
        let message = `Importazione completata: ${response.data.data.summary.successful} operazioni, ${response.data.data.summary.failed} errori`;
-       if (wishlistAdded > 0 || wishlistRemoved > 0) {
-         message += `. Wishlist: ${wishlistAdded > 0 ? `+${wishlistAdded} aggiunti` : ''}${wishlistAdded > 0 && wishlistRemoved > 0 ? ', ' : ''}${wishlistRemoved > 0 ? `-${wishlistRemoved} rimossi` : ''}`;
+       if (wishlistAdded > 0) {
+         message += `. Wishlist: +${wishlistAdded} aggiunti`;
        }
        
        setAlert({ 
@@ -305,14 +303,7 @@ const QuotazioniUpload: React.FC = () => {
                                size="small"
                              />
                            )}
-                           {result.wishlistRemoved && (
-                             <Chip 
-                               label="🤍 Rimosso" 
-                               color="warning" 
-                               size="small"
-                             />
-                           )}
-                           {!result.wishlistAdded && !result.wishlistRemoved && (
+                           {!result.wishlistAdded && (
                              <Typography variant="body2" color="text.secondary">
                                Nessuna modifica
                              </Typography>

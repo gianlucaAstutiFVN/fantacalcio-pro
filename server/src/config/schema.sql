@@ -61,17 +61,7 @@ CREATE TABLE IF NOT EXISTS acquisti (
     FOREIGN KEY (squadra_id) REFERENCES squadre(id) ON DELETE CASCADE
 );
 
--- Tabella storico aste
-CREATE TABLE IF NOT EXISTS asta_storico (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    giocatore_id TEXT NOT NULL,
-    squadra_id INTEGER NOT NULL,
-    prezzo INTEGER NOT NULL,
-    tipo TEXT DEFAULT 'acquisto',
-    data_operazione DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (giocatore_id) REFERENCES giocatori(id) ON DELETE CASCADE,
-    FOREIGN KEY (squadra_id) REFERENCES squadre(id) ON DELETE CASCADE
-);
+
 
 -- Indici per performance
 CREATE INDEX IF NOT EXISTS idx_giocatori_squadra ON giocatori(squadra);

@@ -58,17 +58,23 @@ const EditNoteDialog: React.FC<EditNoteDialogProps> = ({
 
     if (validateForm()) {
       setLoading(true)
+      
+      // Aggiornamento ottimistico immediato
+      const giocatoreAggiornato = {
+        ...giocatore,
+        note: note.trim()
+      }
+      
+      if (onNoteUpdated) {
+        onNoteUpdated(giocatoreAggiornato)
+      }
+      
       try {
         const response = await giocatoriAPI.updateNotes(giocatore.id, note.trim())
         
         if (response.success && response.data) {
           setSuccessMessage('Note aggiornate con successo!')
           
-          // Notifica il componente padre dell'aggiornamento
-          if (onNoteUpdated) {
-            onNoteUpdated(response.data)
-          }
-
           // Reset del form in caso di successo
           setErrors({})
 
@@ -78,10 +84,18 @@ const EditNoteDialog: React.FC<EditNoteDialogProps> = ({
             onClose()
           }, 3000)
         } else {
+          // Rollback in caso di errore
+          if (onNoteUpdated) {
+            onNoteUpdated(giocatore)
+          }
           setErrors({ submit: response.error || 'Errore nell\'aggiornamento delle note' })
         }
       } catch (error) {
         console.error('Errore nell\'aggiornamento delle note:', error)
+        // Rollback in caso di errore
+        if (onNoteUpdated) {
+          onNoteUpdated(giocatore)
+        }
         setErrors({ submit: 'Errore nella comunicazione con il server' })
       } finally {
         setLoading(false)

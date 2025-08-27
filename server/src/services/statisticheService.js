@@ -1,5 +1,4 @@
 const giocatoriService = require('./giocatoriService');
-const astaService = require('./astaService');
 const squadreService = require('./squadreService');
 
 // Importa anche il sistema squadre-db per compatibilità
@@ -14,17 +13,15 @@ try {
 const getStatisticheGenerali = async () => {
   try {
     const giocatori = await giocatoriService.getAllGiocatori();
-    const acquisti = await astaService.getStoricoAste();
+    // Per ora restituiamo statistiche base senza acquisti
+    // TODO: Implementare lettura dalla tabella acquisti quando sarà disponibile
     
-    const spesaTotale = acquisti.reduce((sum, a) => sum + (parseInt(a.valore) || 0), 0);
-    const prezzoMedio = acquisti.length > 0 ? spesaTotale / acquisti.length : 0;
+    const spesaTotale = 0;
+    const prezzoMedio = 0;
     
     // Distribuzione per ruolo
     const distribuzioneRuolo = {};
-    acquisti.forEach(a => {
-      const ruolo = a.ruolo || 'Non specificato';
-      distribuzioneRuolo[ruolo] = (distribuzioneRuolo[ruolo] || 0) + 1;
-    });
+
     
     // Distribuzione per squadra acquirente
     const distribuzioneSquadra = {};
@@ -34,7 +31,7 @@ const getStatisticheGenerali = async () => {
     });
     
     const statistiche = {
-      totaleAcquisti: acquisti.length,
+      totaleAcquisti: 0,
       spesaTotale,
       prezzoMedio: Math.round(prezzoMedio * 100) / 100,
       distribuzioneRuolo,
@@ -76,7 +73,9 @@ const getAllSquadre = async () => {
 // Ottieni statistiche della lega
 const getStatisticheLega = async () => {
   try {
-    const acquisti = await astaService.getStatisticheAste();
+    // Per ora restituiamo statistiche base senza acquisti
+    // TODO: Implementare lettura dalla tabella acquisti quando sarà disponibile
+    const acquisti = [];
     const squadre = await getAllSquadre();
     
     // Top giocatori per reparto
@@ -154,7 +153,9 @@ const getStatisticheLega = async () => {
 // Ottieni statistiche comparative
 const getStatisticheComparative = async () => {
   try {
-    const acquisti = await astaService.getStatisticheAste();
+    // Per ora restituiamo statistiche base senza acquisti
+    // TODO: Implementare lettura dalla tabella acquisti quando sarà disponibile
+    const acquisti = [];
     const squadre = await getAllSquadre();
     
     const statisticheSquadre = squadre.map(squadra => {

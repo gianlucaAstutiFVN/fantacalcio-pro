@@ -49,6 +49,12 @@ export const giocatoriAPI = {
     const response = await api.patch(`/giocatori/${id}/fantasquadra`, { fantasquadra })
     return response.data
   },
+
+  // Update giocatore valutazione
+  updateValutazione: async (id: string, valutazione: number | null): Promise<ApiResponse<Giocatore>> => {
+    const response = await api.patch(`/giocatori/${id}/valutazione`, { valutazione })
+    return response.data
+  },
 }
 
 // Squadre API

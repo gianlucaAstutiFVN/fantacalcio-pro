@@ -5,9 +5,10 @@ import axios from 'axios'
 
 interface UseGiocatoriDataGridProps {
   onRefresh?: () => void
+  onGiocatoreUpdated?: (giocatore: Giocatore) => void
 }
 
-export const useGiocatoriDataGrid = ({ onRefresh }: UseGiocatoriDataGridProps) => {
+export const useGiocatoriDataGrid = ({ onRefresh, onGiocatoreUpdated }: UseGiocatoriDataGridProps) => {
   const [searchParams, setSearchParams] = useSearchParams()
   
   // Recupera paginazione da URL o default
@@ -169,10 +170,10 @@ export const useGiocatoriDataGrid = ({ onRefresh }: UseGiocatoriDataGridProps) =
     setOpenEditNoteDialog(true)
   }
 
-  const handleNoteUpdated = (_giocatore: Giocatore) => {
-    // Aggiorna i dati locali se necessario
-    if (onRefresh) {
-      onRefresh()
+  const handleNoteUpdated = (giocatore: Giocatore) => {
+    // Aggiornamento ottimistico
+    if (onGiocatoreUpdated) {
+      onGiocatoreUpdated(giocatore)
     }
     setOpenEditNoteDialog(false)
     setGiocatorePerNote(null)
@@ -183,14 +184,16 @@ export const useGiocatoriDataGrid = ({ onRefresh }: UseGiocatoriDataGridProps) =
     setOpenEditValutazioneDialog(true)
   }
 
-  const handleValutazioneUpdated = (_giocatore: Giocatore) => {
-    // Aggiorna i dati locali se necessario
-    if (onRefresh) {
-      onRefresh()
+  const handleValutazioneUpdated = (giocatore: Giocatore) => {
+    // Aggiornamento ottimistico
+    if (onGiocatoreUpdated) {
+      onGiocatoreUpdated(giocatore)
     }
     setOpenEditValutazioneDialog(false)
     setGiocatorePerValutazione(null)
   }
+
+
 
   // Aggiorna paginazione e salva in URL
   const handlePaginationModelChange = (newModel: { page: number; pageSize: number }) => {

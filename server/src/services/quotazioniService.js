@@ -281,6 +281,7 @@ class QuotazioniService {
                     }
 
                     // Gestione automatica wishlist per giocatori preferiti
+                    // Aggiungi alla wishlist solo se esplicitamente marcato come preferito nel CSV
                     if (quotazioneData.preferito) {
                         try {
                             // Verifica se il giocatore è già in wishlist
@@ -301,19 +302,9 @@ class QuotazioniService {
                             console.warn(`Errore nell'aggiunta alla wishlist per giocatore ${giocatore.id}:`, wishlistError);
                             // Non bloccare l'importazione per errori wishlist
                         }
-                    } else {
-                        // Se non è più preferito, rimuovi dalla wishlist
-                        try {
-                            await this.db.run(
-                                'DELETE FROM wishlist WHERE giocatore_id = ?',
-                                [giocatore.id]
-                            );
-                            results[results.length - 1].wishlistRemoved = true;
-                        } catch (wishlistError) {
-                            console.warn(`Errore nella rimozione dalla wishlist per giocatore ${giocatore.id}:`, wishlistError);
-                            // Non bloccare l'importazione per errori wishlist
-                        }
                     }
+                    // NOTA: Non rimuoviamo più i giocatori dalla wishlist quando non sono marcati come preferiti nel CSV
+                    // Questo evita di perdere dati della wishlist durante l'importazione di quotazioni
                 } catch (error) {
                     errors.push({
                         row: row,

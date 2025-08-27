@@ -19,7 +19,6 @@ class Migration {
       // Rimuovi le tabelle esistenti per un setup pulito
   
       const dropQueries = [
-        'DROP TABLE IF EXISTS asta_storico',
         'DROP TABLE IF EXISTS acquisti', 
         'DROP TABLE IF EXISTS wishlist',
         'DROP TABLE IF EXISTS quotazioni',
@@ -238,7 +237,7 @@ class Migration {
         await this.db.connect();
       }
       
-      const tables = ['asta_storico', 'acquisti', 'wishlist', 'squadre', 'giocatori'];
+      const tables = ['acquisti', 'wishlist', 'squadre', 'giocatori'];
       
       for (const table of tables) {
         await this.db.run(`DELETE FROM ${table}`);

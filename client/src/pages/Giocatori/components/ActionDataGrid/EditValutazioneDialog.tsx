@@ -11,6 +11,7 @@ import {
   Alert,
 } from '@mui/material'
 import { Giocatore } from '../../../../types'
+import { giocatoriAPI } from '../../../../services/api'
 
 interface EditValutazioneDialogProps {
   open: boolean
@@ -52,24 +53,41 @@ const EditValutazioneDialog: React.FC<EditValutazioneDialogProps> = ({
   const handleSave = async () => {
     if (validateForm()) {
       setLoading(true)
+      
+      // Aggiornamento ottimistico immediato
+      const giocatoreAggiornato = {
+        ...giocatore!,
+        mia_valutazione: valutazione ? parseInt(valutazione) : null
+      }
+      
+      onValutazioneUpdated(giocatoreAggiornato)
+      
       try {
-        // Simula il salvataggio - in futuro dovrai implementare la chiamata API
-        const giocatoreAggiornato = {
-          ...giocatore!,
-          mia_valutazione: valutazione ? parseInt(valutazione) : null
+        // Chiama l'API per aggiornare la valutazione
+        const response = await giocatoriAPI.updateValutazione(
+          giocatore!.id, 
+          valutazione ? parseInt(valutazione) : null
+        )
+        
+        if (response.success) {
+          setSuccessMessage('Valutazione aggiornata con successo!')
+          
+          // Chiudi il dialog dopo 2 secondi
+          setTimeout(() => {
+            setSuccessMessage('')
+            onClose()
+          }, 2000)
+        } else {
+          // Rollback in caso di errore
+          onValutazioneUpdated(giocatore!)
+          setErrors({ submit: response.error || 'Errore nell\'aggiornamento della valutazione' })
         }
-        
-        onValutazioneUpdated(giocatoreAggiornato)
-        setSuccessMessage('Valutazione aggiornata con successo!')
-        
-        // Chiudi il dialog dopo 2 secondi
-        setTimeout(() => {
-          setSuccessMessage('')
-          onClose()
-        }, 2000)
-      } catch (error) {
+      } catch (error: any) {
         console.error('Errore nell\'aggiornamento della valutazione:', error)
-        setErrors({ submit: 'Errore nell\'aggiornamento della valutazione' })
+        // Rollback in caso di errore
+        onValutazioneUpdated(giocatore!)
+        const errorMessage = error.response?.data?.error || 'Errore nell\'aggiornamento della valutazione'
+        setErrors({ submit: errorMessage })
       } finally {
         setLoading(false)
       }

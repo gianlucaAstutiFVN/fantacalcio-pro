@@ -28,6 +28,8 @@ export const useGiocatoriColumns = ({
   onEditValutazione,
 }: GiocatoriColumnsProps): GridColDef[] => {
   
+
+  
   const getRuoloColor = (ruolo: string) => {
     switch (ruolo.toLowerCase()) {
       case 'portiere': return 'error'

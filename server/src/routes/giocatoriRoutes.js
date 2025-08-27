@@ -48,11 +48,14 @@ router.patch('/:id/note', giocatoriController.updateNote.bind(giocatoriControlle
 // PATCH /api/giocatori/:id/fantasquadra - Aggiorna fantasquadra
 router.patch('/:id/fantasquadra', giocatoriController.updateFantasquadra.bind(giocatoriController));
 
-// GET /api/giocatori/:id - Giocatore specifico
-router.get('/:id', giocatoriController.getGiocatoreById.bind(giocatoriController));
+// PATCH /api/giocatori/:id/valutazione - Aggiorna valutazione
+router.patch('/:id/valutazione', giocatoriController.updateValutazione.bind(giocatoriController));
 
 // GET /api/giocatori/:ruolo - Giocatori per ruolo
 router.get('/:ruolo', giocatoriController.getGiocatoriByRuolo.bind(giocatoriController));
+
+// GET /api/giocatori/:id - Giocatore specifico
+router.get('/:id', giocatoriController.getGiocatoreById.bind(giocatoriController));
 
 // POST - Upload CSV per importazione giocatori
 router.post('/upload-csv', upload.single('csv'), giocatoriController.uploadCSV.bind(giocatoriController));
