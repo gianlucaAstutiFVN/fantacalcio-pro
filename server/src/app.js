@@ -14,8 +14,20 @@ app.use(cors(config.cors));
 // Servi file statici dalla cartella public
 app.use(express.static('public'));
 
+// In produzione, servi i file statici del client
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../../client/dist')));
+}
+
 // Monta le routes
 app.use('/api', routes);
+
+// In produzione, gestisci le route del client per SPA
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+  });
+}
 
 // Middleware per gestire errori 404
 app.use('*', (req, res) => {
