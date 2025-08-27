@@ -22,7 +22,6 @@ class Database {
     return new Promise((resolve, reject) => {
       this.db = new sqlite3.Database(DB_PATH, (err) => {
         if (err) {
-          console.error('Errore connessione database:', err);
           reject(err);
         } else {
           
@@ -40,10 +39,8 @@ class Database {
       if (this.db) {
         this.db.close((err) => {
           if (err) {
-            console.error('Errore chiusura database:', err);
             reject(err);
           } else {
-
             resolve();
           }
         });
@@ -58,7 +55,6 @@ class Database {
     return new Promise((resolve, reject) => {
       this.db.run(sql, params, function(err) {
         if (err) {
-          console.error('Errore query run:', err);
           reject(err);
         } else {
           resolve({ id: this.lastID, changes: this.changes });
@@ -72,7 +68,6 @@ class Database {
     return new Promise((resolve, reject) => {
       this.db.get(sql, params, (err, row) => {
         if (err) {
-          console.error('Errore query get:', err);
           reject(err);
         } else {
           resolve(row);
@@ -86,7 +81,6 @@ class Database {
     return new Promise((resolve, reject) => {
       this.db.all(sql, params, (err, rows) => {
         if (err) {
-          console.error('Errore query all:', err);
           reject(err);
         } else {
           resolve(rows);
@@ -119,7 +113,6 @@ class Database {
           const { sql, params } = queries[index];
           this.db.run(sql, params, function(err) {
             if (err) {
-              console.error(`Errore query ${index}:`, err);
               hasError = true;
             } else {
               results.push({ id: this.lastID, changes: this.changes });

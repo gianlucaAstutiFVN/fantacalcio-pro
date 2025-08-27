@@ -316,7 +316,6 @@ class GiocatoriService {
         }
       };
     } catch (error) {
-      console.error('❌ Errore nell\'importazione CSV giocatori:', error);
       throw new Error('Errore nell\'importazione del CSV giocatori');
     }
   }

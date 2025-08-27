@@ -12,12 +12,10 @@ const startServer = () => {
 
 // Gestione errori non catturati
 process.on('uncaughtException', (error) => {
-  console.error('❌ Errore non catturato:', error);
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('❌ Promise rifiutata non gestita:', reason);
   process.exit(1);
 });
 

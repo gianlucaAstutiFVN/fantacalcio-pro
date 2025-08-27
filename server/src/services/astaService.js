@@ -39,7 +39,6 @@ const getStoricoAste = async () => {
     const filePath = path.join(__dirname, '..', '..', '..', 'asta', 'asta_giocatori.csv');
     return await readCSV(filePath);
   } catch (error) {
-    console.error('Errore nella lettura del CSV aste:', error);
     throw error;
   }
 };
@@ -60,7 +59,6 @@ const getStatisticheAste = async () => {
       dataAcquisto: asta.dataAcquisto || asta.data || new Date().toISOString()
     }));
   } catch (error) {
-    console.error('Errore nel caricamento delle statistiche aste:', error);
     return [];
   }
 };
@@ -101,7 +99,6 @@ const getAsteAttive = async () => {
     
     return asteAttive;
   } catch (error) {
-    console.error('Errore nel caricamento delle aste attive:', error);
     throw error;
   }
 };

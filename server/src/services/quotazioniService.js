@@ -40,7 +40,6 @@ class QuotazioniService {
                 data: quotazioni
             };
         } catch (error) {
-            console.error('Errore nel recupero quotazioni:', error);
             throw new Error('Errore nel recupero delle quotazioni');
         }
     }
@@ -69,7 +68,6 @@ class QuotazioniService {
                 data: quotazioni
             };
         } catch (error) {
-            console.error('Errore nel recupero quotazioni giocatore:', error);
             throw new Error('Errore nel recupero delle quotazioni del giocatore');
         }
     }
@@ -128,7 +126,6 @@ class QuotazioniService {
                 }
             };
         } catch (error) {
-            console.error('Errore nella creazione quotazione:', error);
             throw error;
         }
     }
@@ -418,7 +415,6 @@ class QuotazioniService {
                 data: quotazioni
             };
         } catch (error) {
-            console.error('Errore nel recupero quotazioni filtrate:', error);
             throw new Error('Errore nel recupero delle quotazioni filtrate');
         }
     }

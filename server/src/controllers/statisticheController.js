@@ -6,7 +6,6 @@ const getStatisticheGenerali = async (req, res) => {
     const statistiche = await statisticheService.getStatisticheGenerali();
     res.json(statistiche);
   } catch (error) {
-    console.error('Errore API statistiche:', error);
     res.status(500).json({ error: 'Errore nel calcolo delle statistiche' });
   }
 };
@@ -17,7 +16,6 @@ const getStatisticheLega = async (req, res) => {
     const statistiche = await statisticheService.getStatisticheLega();
     res.json(statistiche);
   } catch (error) {
-    console.error('Errore API statistiche lega:', error);
     res.status(500).json({ error: 'Errore nel calcolo delle statistiche della lega' });
   }
 };
@@ -28,7 +26,6 @@ const getStatisticheComparative = async (req, res) => {
     const statistiche = await statisticheService.getStatisticheComparative();
     res.json(statistiche);
   } catch (error) {
-    console.error('Errore API statistiche comparative:', error);
     res.status(500).json({ error: 'Errore nel calcolo delle statistiche comparative' });
   }
 };

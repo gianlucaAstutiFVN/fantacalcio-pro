@@ -15,7 +15,6 @@ class QuotazioniController {
             const result = await this.quotazioniService.getAllQuotazioni();
             res.json(result);
         } catch (error) {
-            console.error('Errore controller getAllQuotazioni:', error);
             res.status(500).json({
                 success: false,
                 error: error.message || 'Errore interno del server'
@@ -40,7 +39,6 @@ class QuotazioniController {
             const result = await this.quotazioniService.getQuotazioniByGiocatore(giocatoreId);
             res.json(result);
         } catch (error) {
-            console.error('Errore controller getQuotazioniByGiocatore:', error);
             res.status(500).json({
                 success: false,
                 error: error.message || 'Errore interno del server'
@@ -63,7 +61,6 @@ class QuotazioniController {
             const result = await this.quotazioniService.getQuotazioniWithFilters(filters);
             res.json(result);
         } catch (error) {
-            console.error('Errore controller getQuotazioniWithFilters:', error);
             res.status(500).json({
                 success: false,
                 error: error.message || 'Errore interno del server'
@@ -113,8 +110,6 @@ class QuotazioniController {
             const result = await this.quotazioniService.createQuotazione(quotazioneData);
             res.status(201).json(result);
         } catch (error) {
-            console.error('Errore controller createQuotazione:', error);
-            
             if (error.message === 'Giocatore non trovato') {
                 return res.status(404).json({
                     success: false,
@@ -170,8 +165,6 @@ class QuotazioniController {
             const result = await this.quotazioniService.updateQuotazione(id, quotazioneData);
             res.json(result);
         } catch (error) {
-            console.error('Errore controller updateQuotazione:', error);
-            
             if (error.message === 'Quotazione non trovata') {
                 return res.status(404).json({
                     success: false,
@@ -203,8 +196,6 @@ class QuotazioniController {
             const result = await this.quotazioniService.deleteQuotazione(id);
             res.json(result);
         } catch (error) {
-            console.error('Errore controller deleteQuotazione:', error);
-            
             if (error.message === 'Quotazione non trovata') {
                 return res.status(404).json({
                     success: false,
@@ -247,13 +238,12 @@ class QuotazioniController {
                         // Importa i dati
                         const result = await this.quotazioniService.importFromCSV(csvData);
                         res.json(result);
-                    } catch (error) {
-                        console.error('Errore nell\'importazione CSV:', error);
-                        res.status(500).json({
-                            success: false,
-                            error: error.message || 'Errore nell\'importazione del CSV'
-                        });
-                    }
+                                        } catch (error) {
+            res.status(500).json({
+              success: false,
+              error: error.message || 'Errore nell\'importazione del CSV'
+            });
+          }
                 })
                 .on('error', (error) => {
                     // Rimuovi il file temporaneo in caso di errore
@@ -261,14 +251,12 @@ class QuotazioniController {
                         fs.unlinkSync(req.file.path);
                     }
                     
-                    console.error('Errore nella lettura CSV:', error);
                     res.status(400).json({
                         success: false,
                         error: 'Errore nella lettura del file CSV'
                     });
                 });
         } catch (error) {
-            console.error('Errore controller uploadCSV:', error);
             res.status(500).json({
                 success: false,
                 error: error.message || 'Errore interno del server'
@@ -294,7 +282,6 @@ class QuotazioniController {
                 data: stats
             });
         } catch (error) {
-            console.error('Errore controller getQuotazioniStats:', error);
             res.status(500).json({
                 success: false,
                 error: error.message || 'Errore interno del server'

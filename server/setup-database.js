@@ -44,9 +44,6 @@ async function main() {
 
     
   } catch (error) {
-    console.error('');
-    console.error('❌ Errore durante il setup:', error.message);
-    console.error('');
     process.exit(1);
   } finally {
     // Chiudi la connessione
@@ -68,4 +65,4 @@ process.on('SIGTERM', async () => {
 });
 
 // Esegui
-main().catch(console.error);
+main().catch(() => process.exit(1));

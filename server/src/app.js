@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const config = require('./config');
 const routes = require('./routes');
 
@@ -15,7 +16,6 @@ app.use(express.static('public'));
 
 // In produzione, servi i file statici del client
 if (process.env.NODE_ENV === 'production') {
-  const path = require('path');
   app.use(express.static(path.join(__dirname, '../../client/dist')));
 }
 
@@ -42,7 +42,6 @@ app.use('*', (req, res) => {
 
 // Middleware per gestire errori globali
 app.use((error, req, res, next) => {
-  console.error('Errore globale:', error);
   res.status(500).json({ 
     error: 'Errore interno del server',
     message: error.message || 'Si è verificato un errore imprevisto'

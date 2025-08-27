@@ -45,7 +45,6 @@ const getStatisticheGenerali = async () => {
     
     return statistiche;
   } catch (error) {
-    console.error('Errore nel calcolo delle statistiche:', error);
     throw error;
   }
 };
@@ -148,7 +147,6 @@ const getStatisticheLega = async () => {
       prezzoMedioLega: Math.round(prezzoMedioLega * 100) / 100
     };
   } catch (error) {
-    console.error('Errore nel calcolo delle statistiche della lega:', error);
     throw error;
   }
 };
@@ -191,7 +189,6 @@ const getStatisticheComparative = async () => {
     
     return statisticheSquadre;
   } catch (error) {
-    console.error('Errore nel calcolo delle statistiche comparative:', error);
     throw error;
   }
 };

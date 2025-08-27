@@ -21,7 +21,6 @@ const registraAcquisto = async (req, res) => {
     
     res.json({ success: true, message: 'Acquisto registrato con successo', acquisto });
   } catch (error) {
-    console.error('Errore API acquista:', error);
     res.status(500).json({ error: 'Errore nella registrazione dell\'acquisto' });
   }
 };
@@ -32,7 +31,6 @@ const getStoricoAste = async (req, res) => {
     const acquisti = await astaService.getStoricoAste();
     res.json(acquisti);
   } catch (error) {
-    console.error('Errore API asta:', error);
     res.status(500).json({ error: 'Errore nella lettura dello storico aste' });
   }
 };
@@ -43,7 +41,6 @@ const getAsteAttive = async (req, res) => {
     const asteAttive = await astaService.getAsteAttive();
     res.json(asteAttive);
   } catch (error) {
-    console.error('Errore API aste:', error);
     res.status(500).json({ error: 'Errore nel caricamento delle aste' });
   }
 };

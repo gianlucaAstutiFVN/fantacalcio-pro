@@ -12,7 +12,6 @@ class SquadreController {
         data: squadre
       });
     } catch (error) {
-      console.error('❌ Errore getAllSquadre:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -38,7 +37,6 @@ class SquadreController {
         data: squadra
       });
     } catch (error) {
-      console.error('❌ Errore getSquadraById:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -70,7 +68,6 @@ class SquadreController {
         data: { id: squadraId, nome, proprietario, budget: budget || 500 }
       });
     } catch (error) {
-      console.error('❌ Errore createSquadra:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -111,7 +108,6 @@ class SquadreController {
         data: { id, nome, proprietario, budget, budget_residuo }
       });
     } catch (error) {
-      console.error('❌ Errore updateSquadra:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -138,7 +134,6 @@ class SquadreController {
         data: { squadraId: id }
       });
     } catch (error) {
-      console.error('❌ Errore deleteSquadra:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -174,7 +169,6 @@ class SquadreController {
         data: { giocatoreId }
       });
     } catch (error) {
-      console.error('❌ Errore addToWishlist:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -193,7 +187,6 @@ class SquadreController {
         data: wishlist
       });
     } catch (error) {
-      console.error('❌ Errore getWishlist:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -220,7 +213,6 @@ class SquadreController {
         data: { giocatoreId }
       });
     } catch (error) {
-      console.error('❌ Errore removeFromWishlist:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -257,8 +249,6 @@ class SquadreController {
         data: { giocatoreId, squadraId, prezzo }
       });
     } catch (error) {
-      console.error('❌ Errore acquistaGiocatore:', error);
-      
       if (error.message === 'Giocatore non disponibile') {
         return res.status(400).json({
           success: false,
@@ -348,8 +338,6 @@ class SquadreController {
         }
       });
     } catch (error) {
-      console.error('❌ Errore assegnaGiocatore:', error);
-      
       // Gestione errori specifici
       if (error.message.includes('Giocatore non disponibile')) {
         return res.status(409).json({
@@ -399,7 +387,6 @@ class SquadreController {
         data: acquisti
       });
     } catch (error) {
-      console.error('❌ Errore getAcquistiSquadra:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -455,8 +442,6 @@ class SquadreController {
         data: risultato
       });
     } catch (error) {
-      console.error('❌ Errore svincolaGiocatore:', error);
-      
       // Gestione errori specifici
       if (error.message.includes('Giocatore non assegnato')) {
         return res.status(409).json({

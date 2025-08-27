@@ -102,20 +102,17 @@ class Migration {
       // Esegui le istruzioni
       for (const statement of statements) {
         if (statement.trim()) {
-          try {
-            await this.db.run(statement);
-          } catch (error) {
-            console.error('❌ Errore esecuzione query:', error.message);
-            console.error('Query problematica:', statement.substring(0, 100) + '...');
-            throw error;
-          }
+            try {
+              await this.db.run(statement);
+            } catch (error) {
+              throw error;
+            }
         }
       }
       
   
       return true;
     } catch (error) {
-      console.error('❌ Errore inizializzazione database:', error);
       throw error;
     }
   }
@@ -134,7 +131,6 @@ class Migration {
   
       return true;
     } catch (error) {
-      console.error('❌ Errore migrazione:', error);
       throw error;
     }
   }
@@ -251,7 +247,6 @@ class Migration {
   
       return true;
     } catch (error) {
-      console.error('❌ Errore reset database:', error);
       throw error;
     }
   }
