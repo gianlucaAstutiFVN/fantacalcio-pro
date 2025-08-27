@@ -16,7 +16,15 @@ app.use(express.static('public'));
 
 // In produzione, servi i file statici del client
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../client/dist')));
+  const clientDistPath = path.join(__dirname, '../../client/dist');
+  const fs = require('fs');
+  
+  // Verifica che la cartella client/dist esista
+  if (fs.existsSync(clientDistPath)) {
+    app.use(express.static(clientDistPath));
+  } else {
+    console.warn('⚠️  Cartella client/dist non trovata. Il frontend non sarà disponibile.');
+  }
 }
 
 // Monta le routes
@@ -24,9 +32,14 @@ app.use('/api', routes);
 
 // In produzione, gestisci le route del client per SPA
 if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
-  });
+  const clientDistPath = path.join(__dirname, '../../client/dist');
+  const fs = require('fs');
+  
+  if (fs.existsSync(clientDistPath)) {
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(clientDistPath, 'index.html'));
+    });
+  }
 }
 
 // Middleware per gestire errori 404
