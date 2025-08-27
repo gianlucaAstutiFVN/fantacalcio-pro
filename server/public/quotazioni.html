@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Quotazioni - Fantacalcio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 1px solid #e1e8ed;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .upload-area {
+            border: 2px dashed #3498db;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #2980b9;
+            background: #ecf0f1;
+        }
+
+        .upload-area.dragover {
+            border-color: #27ae60;
+            background: #d5f4e6;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            cursor: pointer;
+            color: #3498db;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .file-label:hover {
+            color: #2980b9;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status.success {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .status.error {
+            background: #fadbd8;
+            color: #e74c3c;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.success {
+            background: #d5f4e6;
+            color: #27ae60;
+            border: 1px solid #a3e4d7;
+        }
+
+        .alert.error {
+            background: #fadbd8;
+            color: #e74c3c;
+            border: 1px solid #f5b7b1;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 Gestione Quotazioni</h1>
+            <p>Gestisci le valutazioni dei giocatori e importa dati da CSV</p>
+        </div>
+
+        <div class="content">
+            <!-- Alert Messages -->
+            <div id="alert" class="alert"></div>
+
+            <!-- Upload CSV Section -->
+            <div class="section">
+                <h2>📁 Importa Quotazioni da CSV</h2>
+                <div class="upload-area" id="uploadArea">
+                    <p>Trascina qui il file CSV o <span class="file-label" onclick="document.getElementById('csvFile').click()">clicca per selezionare</span></p>
+                    <p style="margin-top: 10px; font-size: 14px; color: #7f8c8d;">
+                        Formato CSV: Nome, Squadra, Fantacalciopedia, PazzidiFanta, Stadiosport, Unveil, Gazzetta, Mia_Valutazione, Note, Preferito
+                    </p>
+                    <input type="file" id="csvFile" class="file-input" accept=".csv" onchange="handleFileSelect(event)">
+                </div>
+                <div class="actions" style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="uploadCSV()" id="uploadBtn" disabled>
+                        📤 Carica CSV
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadTemplate()">
+                        📥 Scarica Template
+                    </button>
+                </div>
+            </div>
+
+            <!-- Manual Quotazione Section -->
+            <div class="section">
+                <h2>✏️ Aggiungi Quotazione Manuale</h2>
+                <form id="quotazioneForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="giocatoreSelect">Giocatore *</label>
+                            <select id="giocatoreSelect" required>
+                                <option value="">Seleziona giocatore...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fonte">Fonte</label>
+                            <select id="fonte">
+                                <option value="manuale">Manuale</option>
+                                <option value="fantacalciopedia">Fantacalciopedia</option>
+                                <option value="pazzidifanta">PazzidiFanta</option>
+                                <option value="stadiosport">Stadiosport</option>
+                                <option value="unveil">Unveil</option>
+                                <option value="gazzetta">Gazzetta</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fantacalciopedia">Fantacalciopedia</label>
+                            <input type="text" id="fantacalciopedia" placeholder="Valutazione Fantacalciopedia">
+                        </div>
+                        <div class="form-group">
+                            <label for="pazzidifanta">PazzidiFanta</label>
+                            <input type="text" id="pazzidifanta" placeholder="Valutazione PazzidiFanta">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="stadiosport">Stadiosport</label>
+                            <input type="text" id="stadiosport" placeholder="Valutazione Stadiosport">
+                        </div>
+                        <div class="form-group">
+                            <label for="unveil">Unveil</label>
+                            <input type="text" id="unveil" placeholder="Valutazione Unveil">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gazzetta">Gazzetta</label>
+                            <input type="text" id="gazzetta" placeholder="Valutazione Gazzetta">
+                        </div>
+                        <div class="form-group">
+                            <label for="miaValutazione">Mia Valutazione</label>
+                            <input type="number" id="miaValutazione" min="0" max="100" placeholder="0-100">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="note">Note</label>
+                        <textarea id="note" rows="3" placeholder="Note aggiuntive..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="preferito"> Giocatore preferito
+                        </label>
+                    </div>
+
+                    <div class="actions">
+                        <button type="submit" class="btn btn-success">💾 Salva Quotazione</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="section">
+                <h2>🔍 Filtri e Ricerca</h2>
+                <div class="filters">
+                    <div class="form-group">
+                        <label for="filterRuolo">Ruolo</label>
+                        <select id="filterRuolo">
+                            <option value="">Tutti i ruoli</option>
+                            <option value="portiere">Portiere</option>
+                            <option value="difensore">Difensore</option>
+                            <option value="centrocampista">Centrocampista</option>
+                            <option value="attaccante">Attaccante</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filterSquadra">Squadra</label>
+                        <input type="text" id="filterSquadra" placeholder="Filtra per squadra">
+                    </div>
+                    <div class="form-group">
+                        <label for="filterFonte">Fonte</label>
+                        <select id="filterFonte">
+                            <option value="">Tutte le fonti</option>
+                            <option value="manuale">Manuale</option>
+                            <option value="csv_import">CSV Import</option>
+                            <option value="fantacalciopedia">Fantacalciopedia</option>
+                            <option value="pazzidifanta">PazzidiFanta</option>
+                            <option value="stadiosport">Stadiosport</option>
+                            <option value="unveil">Unveil</option>
+                            <option value="gazzetta">Gazzetta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filterPreferito">Preferito</label>
+                        <select id="filterPreferito">
+                            <option value="">Tutti</option>
+                            <option value="true">Solo preferiti</option>
+                            <option value="false">Non preferiti</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="btn btn-secondary" onclick="applyFilters()">🔍 Applica Filtri</button>
+                    <button class="btn btn-secondary" onclick="clearFilters()">🗑️ Pulisci Filtri</button>
+                </div>
+            </div>
+
+            <!-- Quotazioni Table Section -->
+            <div class="section">
+                <h2>📊 Lista Quotazioni</h2>
+                <div class="actions">
+                    <button class="btn btn-secondary" onclick="refreshQuotazioni()">🔄 Aggiorna</button>
+                    <button class="btn btn-success" onclick="exportToCSV()">📥 Esporta CSV</button>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Caricamento quotazioni...</p>
+                </div>
+
+                <div class="table-container" id="tableContainer" style="display: none;">
+                    <table id="quotazioniTable">
+                        <thead>
+                            <tr>
+                                <th>Giocatore</th>
+                                <th>Squadra</th>
+                                <th>Ruolo</th>
+                                <th>Fantacalciopedia</th>
+                                <th>PazzidiFanta</th>
+                                <th>Stadiosport</th>
+                                <th>Unveil</th>
+                                <th>Gazzetta</th>
+                                <th>Mia Valutazione</th>
+                                <th>Note</th>
+                                <th>Preferito</th>
+                                <th>Fonte</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="quotazioniTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuotazioni = [];
+        let selectedFile = null;
+
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGiocatori();
+            loadQuotazioni();
+            setupDragAndDrop();
+        });
+
+        // Setup drag and drop
+        function setupDragAndDrop() {
+            const uploadArea = document.getElementById('uploadArea');
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFile(files[0]);
+                }
+            });
+        }
+
+        // Gestione selezione file
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+                showAlert('Seleziona un file CSV valido', 'error');
+                return;
+            }
+
+            selectedFile = file;
+            document.getElementById('uploadBtn').disabled = false;
+            showAlert(`File selezionato: ${file.name}`, 'success');
+        }
+
+        // Upload CSV
+        async function uploadCSV() {
+            if (!selectedFile) {
+                showAlert('Seleziona un file CSV', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('csv', selectedFile);
+
+            try {
+                document.getElementById('uploadBtn').disabled = true;
+                showAlert('Caricamento in corso...', 'success');
+
+                const response = await fetch('/api/quotazioni/upload-csv', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert(`Importazione completata: ${result.data.summary.successful} operazioni, ${result.data.summary.failed} errori`, 'success');
+                    loadQuotazioni();
+                    resetForm();
+                } else {
+                    showAlert(`Errore: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showAlert(`Errore di caricamento: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('uploadBtn').disabled = false;
+            }
+        }
+
+        // Carica giocatori per il form
+        async function loadGiocatori() {
+            try {
+                const response = await fetch('/api/giocatori');
+                const result = await response.json();
+
+                if (result.success) {
+                    const select = document.getElementById('giocatoreSelect');
+                    select.innerHTML = '<option value="">Seleziona giocatore...</option>';
+                    
+                    result.data.forEach(giocatore => {
+                        const option = document.createElement('option');
+                        option.value = giocatore.id;
+                        option.textContent = `${giocatore.nome} (${giocatore.squadra}) - ${giocatore.ruolo}`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                showAlert(`Errore nel caricamento giocatori: ${error.message}`, 'error');
+            }
+        }
+
+        // Carica quotazioni
+        async function loadQuotazioni() {
+            try {
+                showLoading(true);
+                const response = await fetch('/api/quotazioni');
+                const result = await response.json();
+
+                if (result.success) {
+                    currentQuotazioni = result.data;
+                    renderQuotazioniTable(result.data);
+                } else {
+                    showAlert(`Errore: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showAlert(`Errore nel caricamento quotazioni: ${error.message}`, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Applica filtri
+        async function applyFilters() {
+            const filters = {
+                ruolo: document.getElementById('filterRuolo').value,
+                squadra: document.getElementById('filterSquadra').value,
+                fonte: document.getElementById('filterFonte').value,
+                preferito: document.getElementById('filterPreferito').value
+            };
+
+            try {
+                showLoading(true);
+                const queryParams = new URLSearchParams();
+                Object.entries(filters).forEach(([key, value]) => {
+                    if (value) queryParams.append(key, value);
+                });
+
+                const response = await fetch(`/api/quotazioni/filtri?${queryParams}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    currentQuotazioni = result.data;
+                    renderQuotazioniTable(result.data);
+                } else {
+                    showAlert(`Errore: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showAlert(`Errore nell'applicazione filtri: ${error.message}`, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Pulisci filtri
+        function clearFilters() {
+            document.getElementById('filterRuolo').value = '';
+            document.getElementById('filterSquadra').value = '';
+            document.getElementById('filterFonte').value = '';
+            document.getElementById('filterPreferito').value = '';
+            loadQuotazioni();
+        }
+
+        // Renderizza tabella quotazioni
+        function renderQuotazioniTable(quotazioni) {
+            const tbody = document.getElementById('quotazioniTableBody');
+            tbody.innerHTML = '';
+
+            if (quotazioni.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="13" style="text-align: center; padding: 40px;">Nessuna quotazione trovata</td></tr>';
+                return;
+            }
+
+            quotazioni.forEach(quotazione => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${quotazione.nome}</td>
+                    <td>${quotazione.squadra}</td>
+                    <td>${quotazione.ruolo}</td>
+                    <td>${quotazione.fantacalciopedia || '-'}</td>
+                    <td>${quotazione.pazzidifanta || '-'}</td>
+                    <td>${quotazione.stadiosport || '-'}</td>
+                    <td>${quotazione.unveil || '-'}</td>
+                    <td>${quotazione.gazzetta || '-'}</td>
+                    <td>${quotazione.mia_valutazione || '-'}</td>
+                    <td>${quotazione.note || '-'}</td>
+                    <td><span class="status ${quotazione.preferito ? 'success' : ''}">${quotazione.preferito ? '❤️' : '🤍'}</span></td>
+                    <td>${quotazione.fonte}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn btn-sm btn-secondary" onclick="editQuotazione(${quotazione.id})">✏️</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteQuotazione(${quotazione.id})">🗑️</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('tableContainer').style.display = 'block';
+        }
+
+        // Form submission
+        document.getElementById('quotazioneForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                giocatore_id: document.getElementById('giocatoreSelect').value,
+                fantacalciopedia: document.getElementById('fantacalciopedia').value || null,
+                pazzidifanta: document.getElementById('pazzidifanta').value || null,
+                stadiosport: document.getElementById('stadiosport').value || null,
+                unveil: document.getElementById('unveil').value || null,
+                gazzetta: document.getElementById('gazzetta').value || null,
+                mia_valutazione: document.getElementById('miaValutazione').value || null,
+                note: document.getElementById('note').value || null,
+                preferito: document.getElementById('preferito').checked,
+                fonte: document.getElementById('fonte').value
+            };
+
+            try {
+                const response = await fetch('/api/quotazioni', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('Quotazione creata con successo!', 'success');
+                    resetForm();
+                    loadQuotazioni();
+                } else {
+                    showAlert(`Errore: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                showAlert(`Errore nella creazione: ${error.message}`, 'error');
+            }
+        });
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('quotazioneForm').reset();
+            document.getElementById('giocatoreSelect').value = '';
+        }
+
+        // Utility functions
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            document.getElementById('tableContainer').style.display = show ? 'none' : 'block';
+        }
+
+        function refreshQuotazioni() {
+            loadQuotazioni();
+        }
+
+        function downloadTemplate() {
+            const csvContent = 'Nome,Squadra,Fantacalciopedia,PazzidiFanta,Stadiosport,Unveil,Gazzetta,Mia_Valutazione,Note,Preferito\nSommer,Inter,85,Top,87,90,1,95,Portiere affidabile,true';
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'template_quotazioni.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Funzioni per edit e delete (da implementare)
+        function editQuotazione(id) {
+            showAlert('Funzionalità di modifica in sviluppo', 'success');
+        }
+
+        function deleteQuotazione(id) {
+            if (confirm('Sei sicuro di voler eliminare questa quotazione?')) {
+                // Implementa eliminazione
+                showAlert('Funzionalità di eliminazione in sviluppo', 'success');
+            }
+        }
+
+        function exportToCSV() {
+            if (currentQuotazioni.length === 0) {
+                showAlert('Nessuna quotazione da esportare', 'error');
+                return;
+            }
+
+            const headers = ['Nome', 'Squadra', 'Ruolo', 'Fantacalciopedia', 'PazzidiFanta', 'Stadiosport', 'Unveil', 'Gazzetta', 'Mia_Valutazione', 'Note', 'Preferito', 'Fonte'];
+            const csvContent = [
+                headers.join(','),
+                ...currentQuotazioni.map(q => [
+                    q.nome,
+                    q.squadra,
+                    q.ruolo,
+                    q.fantacalciopedia || '',
+                    q.pazzidifanta || '',
+                    q.stadiosport || '',
+                    q.unveil || '',
+                    q.gazzetta || '',
+                    q.mia_valutazione || '',
+                    q.note || '',
+                    q.preferito ? 'true' : 'false',
+                    q.fonte
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `quotazioni_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

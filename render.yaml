@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: fantacalcio-api
+    env: node
+    plan: free
+    buildCommand: npm run install-all && npm run build
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CORS_ORIGIN
+        value: https://fantacalcio-client.onrender.com
+      - key: LOG_LEVEL
+        value: info
+
+  - type: web
+    name: fantacalcio-client
+    env: static
+    plan: free
+    buildCommand: cd client && npm install && npm run build:prod
+    staticPublishPath: ./client/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://fantacalcio-api.onrender.com
