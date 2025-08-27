@@ -16,7 +16,6 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "typeRoots": ["./node_modules/@types", "./src/types"],
-    "types": ["node", "react", "react-dom"],
 
     /* Linting */
     "strict": true,
