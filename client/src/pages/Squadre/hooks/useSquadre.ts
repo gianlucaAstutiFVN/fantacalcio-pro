@@ -28,7 +28,7 @@ export const useSquadre = (): UseSquadreReturn => {
       if (response.data.success && Array.isArray(response.data.data)) {
         console.log('📥 Squadre ricevute dal server:', response.data.data)
         
-        // Debug: verifica giocatori per ogni squadra
+        
         response.data.data.forEach((squadra: any) => {
           if (squadra.giocatori && squadra.giocatori.length > 0) {
             console.log(`🏆 Frontend - Squadra ${squadra.nome}: ${squadra.giocatori.length} giocatori`)

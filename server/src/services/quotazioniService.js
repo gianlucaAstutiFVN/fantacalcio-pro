@@ -235,25 +235,36 @@ class QuotazioniService {
                         continue;
                     }
 
-                    // Crea o aggiorna quotazione
+                    // Verifica se esiste già una quotazione per questo giocatore
+                    const existingQuotazione = await this.db.get(
+                        'SELECT * FROM quotazioni WHERE giocatore_id = ?',
+                        [giocatore.id]
+                    );
+
+                    // Funzione per preservare valori esistenti se il CSV ha campi vuoti
+                    const preserveExistingValue = (csvValue, existingValue) => {
+                        // Se il CSV ha un valore valido (non vuoto, non null, non undefined), usalo
+                        if (csvValue !== null && csvValue !== undefined && csvValue !== '') {
+                            return csvValue;
+                        }
+                        // Altrimenti mantieni il valore esistente
+                        return existingValue;
+                    };
+
+                    // Prepara i dati per l'aggiornamento, preservando i valori esistenti
                     const quotazioneData = {
                         giocatore_id: giocatore.id,
-                        fantacalciopedia: row.Fantacalciopedia || null,
-                        pazzidifanta: row.PazzidiFanta || null,
-                        stadiosport: row.Stadiosport || null,
-                        unveil: row.Unveil || null,
-                        gazzetta: row.Gazzetta || null,
-                        mia_valutazione: row.Mia_Valutazione ? parseInt(row.Mia_Valutazione) : null,
-                        note: row.Note || null,
+                        fantacalciopedia: preserveExistingValue(row.Fantacalciopedia, existingQuotazione?.fantacalciopedia),
+                        pazzidifanta: preserveExistingValue(row.PazzidiFanta, existingQuotazione?.pazzidifanta),
+                        stadiosport: preserveExistingValue(row.Stadiosport, existingQuotazione?.stadiosport),
+                        unveil: preserveExistingValue(row.Unveil, existingQuotazione?.unveil),
+                        gazzetta: preserveExistingValue(row.Gazzetta, existingQuotazione?.gazzetta),
+                        mia_valutazione: row.Mia_Valutazione && row.Mia_Valutazione !== '' ? 
+                            parseInt(row.Mia_Valutazione) : existingQuotazione?.mia_valutazione,
+                        note: preserveExistingValue(row.Note, existingQuotazione?.note),
                         preferito: row.Preferito === 'true' || row.Preferito === '1' ? 1 : 0,
                         fonte: 'csv_import'
                     };
-
-                    // Verifica se esiste già una quotazione per questo giocatore
-                    const existingQuotazione = await this.db.get(
-                        'SELECT id FROM quotazioni WHERE giocatore_id = ?',
-                        [giocatore.id]
-                    );
 
                     if (existingQuotazione) {
                         // Aggiorna quotazione esistente
@@ -264,8 +275,21 @@ class QuotazioniService {
                             data: quotazioneData
                         });
                     } else {
-                        // Crea nuova quotazione
-                        const result = await this.createQuotazione(quotazioneData);
+                        // Crea nuova quotazione (per nuove quotazioni, usa i valori del CSV o null)
+                        const newQuotazioneData = {
+                            giocatore_id: giocatore.id,
+                            fantacalciopedia: row.Fantacalciopedia || null,
+                            pazzidifanta: row.PazzidiFanta || null,
+                            stadiosport: row.Stadiosport || null,
+                            unveil: row.Unveil || null,
+                            gazzetta: row.Gazzetta || null,
+                            mia_valutazione: row.Mia_Valutazione ? parseInt(row.Mia_Valutazione) : null,
+                            note: row.Note || null,
+                            preferito: row.Preferito === 'true' || row.Preferito === '1' ? 1 : 0,
+                            fonte: 'csv_import'
+                        };
+                        
+                        const result = await this.createQuotazione(newQuotazioneData);
                         results.push({
                             giocatore: giocatore.id,
                             action: 'created',

@@ -3,6 +3,7 @@ import HomeIcon from '@mui/icons-material/Home'
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer'
 import GroupIcon from '@mui/icons-material/Group'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 
 export interface RouteConfig {
   path: string
@@ -35,6 +36,12 @@ export const routes: RouteConfig[] = [
     name: 'Statistiche',
     icon: <TrendingUpIcon />,
     description: 'Analisi e statistiche'
+  },
+  {
+    path: '/formazioni',
+    name: 'Formazioni',
+    icon: <EmojiEventsIcon />,
+    description: 'Formazioni Serie A'
   }
 ]
 

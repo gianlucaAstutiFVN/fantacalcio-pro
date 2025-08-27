@@ -48,7 +48,7 @@ export const useGiocatori = (): UseGiocatoriReturn => {
   }, [giocatori])
 
   const getTuttiGiocatori = useCallback(() => {
-    // Restituisce tutti i giocatori (utile per debug e amministrazione)
+    // Restituisce tutti i giocatori
     return giocatori
   }, [giocatori])
 

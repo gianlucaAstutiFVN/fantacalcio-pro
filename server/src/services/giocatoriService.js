@@ -201,6 +201,132 @@ class GiocatoriService {
       return false;
     }
   }
+
+  // Importa giocatori da CSV
+  async importFromCSV(csvData) {
+    try {
+      const results = [];
+      const errors = [];
+
+      for (const row of csvData) {
+        try {
+          // Crea ID univoco basato sul nome e squadra
+          const id = `${row.Nome?.replace(/\s+/g, '_')}_${row.Squadra?.replace(/\s+/g, '_')}`.toLowerCase();
+          
+          // Verifica se il giocatore esiste già
+          const existingGiocatore = await this.db.get(
+            'SELECT * FROM giocatori WHERE id = ?',
+            [id]
+          );
+
+          // Funzione per preservare valori esistenti se il CSV ha campi vuoti
+          const preserveExistingValue = (csvValue, existingValue) => {
+            if (csvValue !== null && csvValue !== undefined && csvValue !== '') {
+              return csvValue;
+            }
+            return existingValue;
+          };
+
+          // Determina il ruolo dal campo Ruolo o dal nome del file
+          let ruolo = row.Ruolo || '';
+          if (!ruolo && row.R) {
+            switch (row.R?.toLowerCase()) {
+              case 'p':
+                ruolo = 'portiere';
+                break;
+              case 'd':
+                ruolo = 'difensore';
+                break;
+              case 'c':
+                ruolo = 'centrocampista';
+                break;
+              case 'a':
+                ruolo = 'attaccante';
+                break;
+              default:
+                ruolo = 'non specificato';
+            }
+          }
+
+          const giocatoreData = {
+            id,
+            nome: preserveExistingValue(row.Nome, existingGiocatore?.nome),
+            squadra: preserveExistingValue(row.Squadra, existingGiocatore?.squadra),
+            ruolo: preserveExistingValue(ruolo, existingGiocatore?.ruolo),
+            fantasquadra: preserveExistingValue(row.Fantasquadra, existingGiocatore?.fantasquadra),
+            status: preserveExistingValue(row.Status, existingGiocatore?.status) || 'disponibile'
+          };
+
+          if (existingGiocatore) {
+            // Aggiorna giocatore esistente
+            const query = `
+              UPDATE giocatori 
+              SET nome = ?, squadra = ?, ruolo = ?, fantasquadra = ?, status = ?, updated_at = CURRENT_TIMESTAMP
+              WHERE id = ?
+            `;
+            
+            await this.db.run(query, [
+              giocatoreData.nome,
+              giocatoreData.squadra,
+              giocatoreData.ruolo,
+              giocatoreData.fantasquadra,
+              giocatoreData.status,
+              id
+            ]);
+
+            results.push({
+              giocatore: id,
+              action: 'updated',
+              data: giocatoreData
+            });
+          } else {
+            // Crea nuovo giocatore
+            const query = `
+              INSERT INTO giocatori (id, nome, squadra, ruolo, fantasquadra, status)
+              VALUES (?, ?, ?, ?, ?, ?)
+            `;
+            
+            await this.db.run(query, [
+              giocatoreData.id,
+              giocatoreData.nome,
+              giocatoreData.squadra,
+              giocatoreData.ruolo,
+              giocatoreData.fantasquadra,
+              giocatoreData.status
+            ]);
+
+            results.push({
+              giocatore: id,
+              action: 'created',
+              data: giocatoreData
+            });
+          }
+        } catch (error) {
+          errors.push({
+            row: row,
+            error: error.message
+          });
+        }
+      }
+
+      return {
+        success: true,
+        message: `Importazione completata: ${results.length} operazioni, ${errors.length} errori`,
+        data: {
+          results,
+          errors,
+          summary: {
+            total: csvData.length,
+            successful: results.length,
+            failed: errors.length
+          }
+        }
+      };
+    } catch (error) {
+      console.error('❌ Errore nell\'importazione CSV giocatori:', error);
+      throw new Error('Errore nell\'importazione del CSV giocatori');
+    }
+  }
 }
 
 module.exports = new GiocatoriService();

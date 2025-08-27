@@ -48,7 +48,7 @@ Se preferisci configurare manualmente:
 #### Backend Service
 - **Type**: Web Service
 - **Environment**: Node
-- **Build Command**: `npm run install-all && npm run build`
+- **Build Command**: `cd server && npm install`
 - **Start Command**: `cd server && npm start`
 - **Plan**: Free
 
@@ -75,6 +75,7 @@ Se preferisci configurare manualmente:
 1. **Build Fallisce**: Controlla i log di build su Render per errori di dipendenze
 2. **CORS Errors**: Verifica che CORS_ORIGIN sia configurato correttamente
 3. **Database Errors**: Assicurati che la cartella `data/` sia accessibile in scrittura
+4. **Module Not Found Errors**: Se vedi errori come "Cannot find module 'express'", assicurati che il buildCommand installi le dipendenze nella cartella corretta (`cd server && npm install`)
 
 ### Logs
 

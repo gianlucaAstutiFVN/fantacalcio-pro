@@ -4,7 +4,6 @@ module.exports = {
   // Configurazione del server
   server: {
     port: process.env.PORT || 5000,
-    host: process.env.HOST || 'localhost',
     env: process.env.NODE_ENV || 'development'
   },
   
@@ -45,7 +44,6 @@ module.exports = {
   
   // Configurazione logging
   logging: {
-    level: process.env.LOG_LEVEL || 'info',
-    file: process.env.LOG_FILE || 'logs/server.log'
+    level: process.env.LOG_LEVEL || 'info'
   }
 };

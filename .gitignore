@@ -98,3 +98,40 @@ uploads/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Test and debug files
+test-*.js
+test-*.ts
+test-*.tsx
+debug-*.js
+debug-*.ts
+debug-*.tsx
+*.test.js
+*.test.ts
+*.test.tsx
+*.spec.js
+*.spec.ts
+*.spec.tsx
+example-*.csv
+example-*.json
+example-*.js
+example-*.ts
+
+# Script files for local development
+*.bat
+*.ps1
+start-*.bat
+stop-*.bat
+start-*.ps1
+stop-*.ps1
+
+# Backup files
+backup-*.js
+backup-*.ts
+backup-*.json
+
+# Documentation files (keep only main README)
+*_README.md
+*_DOCUMENTATION.md
+CSV_*.md
+API_*.md

@@ -324,8 +324,6 @@ app.get('/api/squadre', (req, res) => {
   try {
     const squadre = squadreDB.getAllSquadre()
     
-    // Debug: log per verificare i giocatori di ogni squadra
-    console.log('🏆 API /api/squadre chiamata - Squadre restituite:')
     squadre.forEach(s => {
       if (s.giocatori && s.giocatori.length > 0) {
         console.log(`  📊 ${s.nome}: ${s.giocatori.length} giocatori`)

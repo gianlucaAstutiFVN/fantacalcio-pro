@@ -109,7 +109,7 @@ const StatisticheLega: React.FC = () => {
   }
 
   const ruoli = ['portiere', 'difensore', 'centrocampista', 'attaccante']
-  const coloriRuoli = {
+  const coloriRuoli: Record<string, 'primary' | 'success' | 'warning' | 'error'> = {
     portiere: 'primary',
     difensore: 'success',
     centrocampista: 'warning',
@@ -172,7 +172,7 @@ const StatisticheLega: React.FC = () => {
                   <Typography variant="subtitle1" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Chip 
                       label={ruolo.charAt(0).toUpperCase() + ruolo.slice(1)} 
-                      color={coloriRuoli[ruolo as keyof typeof coloriRuoli]} 
+                      color={coloriRuoli[ruolo] || 'default'} 
                       size="small" 
                     />
                     Top 5
@@ -233,7 +233,7 @@ const StatisticheLega: React.FC = () => {
                   <Typography variant="h6" gutterBottom>
                     <Chip 
                       label={statRuolo.ruolo.charAt(0).toUpperCase() + statRuolo.ruolo.slice(1)} 
-                      color={coloriRuoli[statRuolo.ruolo as keyof typeof coloriRuoli]} 
+                      color={coloriRuoli[statRuolo.ruolo] || 'default'} 
                       size="small" 
                     />
                   </Typography>
@@ -321,7 +321,7 @@ const StatisticheLega: React.FC = () => {
                               <TableCell>
                                 <Chip 
                                   label={ruolo.charAt(0).toUpperCase() + ruolo.slice(1)} 
-                                  color={coloriRuoli[ruolo as keyof typeof coloriRuoli]} 
+                                  color={coloriRuoli[ruolo] || 'default'} 
                                   size="small" 
                                   variant="outlined"
                                 />

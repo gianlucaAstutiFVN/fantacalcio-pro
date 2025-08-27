@@ -52,7 +52,7 @@ const getAllSquadre = () => {
     budget_residuo: squadra.budget - squadra.giocatori.reduce((sum, g) => sum + (g.valore || 0), 0)
   }))
   
-  // Debug: log per verificare i giocatori di ogni squadra
+  
   squadreConStats.forEach(s => {
     if (s.giocatori && s.giocatori.length > 0) {
       console.log(`🏆 Squadra ${s.nome}: ${s.giocatori.length} giocatori`)
@@ -187,11 +187,7 @@ const acquistaGiocatore = (squadraId, giocatoreData) => {
     }
     
     squadra.giocatori.push(giocatoreAcquistato)
-    
-    // Debug: log per verificare che il giocatore sia stato aggiunto
-    console.log(`✅ Giocatore ${giocatoreAcquistato.nome} aggiunto alla squadra ${squadra.nome}`)
-    console.log(`📊 Squadra ora ha ${squadra.giocatori.length} giocatori`)
-    
+
     // Aggiorna budget residuo
     squadra.budget_residuo = squadra.budget - squadra.giocatori.reduce((sum, g) => sum + (g.valore || 0), 0)
     

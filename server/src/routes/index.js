@@ -15,7 +15,7 @@ router.use('/squadre', squadreRoutes);
 router.use('/statistiche', statisticheRoutes);
 router.use('/quotazioni', quotazioniRoutes);
 
-// Route di test per verificare che il server funzioni
+// Route di health check
 router.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 

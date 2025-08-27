@@ -49,7 +49,7 @@ class SquadreService {
         squadra.giocatori = giocatori;
         squadra.spesaTotale = spesaTotale;
         
-        // Debug: log per verificare i giocatori di ogni squadra
+        
         if (giocatori.length > 0) {
           console.log(`🏆 Squadra ${squadra.nome}: ${giocatori.length} giocatori`)
           giocatori.forEach(g => {

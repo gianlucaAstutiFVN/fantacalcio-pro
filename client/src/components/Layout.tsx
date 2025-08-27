@@ -23,6 +23,7 @@ import {
   SquadrePage,
   StatistichePage
 } from '../pages'
+import { FormazioniPage, DettaglioSquadraPage } from '../pages/Formazioni'
 import { routes } from '../config/routes'
 
 const drawerWidth = 240
@@ -176,6 +177,8 @@ const Layout: React.FC = () => {
           <Route path="/giocatori" element={<GiocatoriPage />} />
           <Route path="/squadre" element={<SquadrePage />} />
           <Route path="/statistiche" element={<StatistichePage />} />
+          <Route path="/formazioni" element={<FormazioniPage />} />
+          <Route path="/formazioni/:squadraId" element={<DettaglioSquadraPage />} />
         </Routes>
       </Box>
     </Box>

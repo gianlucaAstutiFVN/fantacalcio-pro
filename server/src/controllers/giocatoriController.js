@@ -1,4 +1,6 @@
 const giocatoriService = require('../services/giocatoriService');
+const fs = require('fs');
+const csv = require('csv-parser');
 
 class GiocatoriController {
   // GET /api/giocatori - Lista completa giocatori
@@ -157,6 +159,61 @@ class GiocatoriController {
       });
     } catch (error) {
       console.error('❌ Errore updateFantasquadra:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Errore interno del server'
+      });
+    }
+  }
+
+  // POST - Upload CSV per importazione giocatori
+  async uploadCSV(req, res) {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          error: 'File CSV richiesto'
+        });
+      }
+
+      const csvData = [];
+      
+      // Leggi il file CSV
+      fs.createReadStream(req.file.path)
+        .pipe(csv())
+        .on('data', (row) => {
+          csvData.push(row);
+        })
+        .on('end', async () => {
+          try {
+            // Rimuovi il file temporaneo
+            fs.unlinkSync(req.file.path);
+            
+            // Importa i dati
+            const result = await giocatoriService.importFromCSV(csvData);
+            res.json(result);
+          } catch (error) {
+            console.error('Errore nell\'importazione CSV giocatori:', error);
+            res.status(500).json({
+              success: false,
+              error: error.message || 'Errore nell\'importazione del CSV giocatori'
+            });
+          }
+        })
+        .on('error', (error) => {
+          // Rimuovi il file temporaneo in caso di errore
+          if (fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+          }
+          
+          console.error('Errore nella lettura CSV giocatori:', error);
+          res.status(400).json({
+            success: false,
+            error: 'Errore nella lettura del file CSV giocatori'
+          });
+        });
+    } catch (error) {
+      console.error('Errore controller uploadCSV giocatori:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'

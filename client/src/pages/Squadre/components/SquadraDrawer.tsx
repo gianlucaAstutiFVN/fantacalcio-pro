@@ -69,7 +69,7 @@ const SquadraDrawer: React.FC<SquadraDrawerProps> = ({
   const handleSvincolaCancel = () => {
     setSvincolaDialog({ open: false, giocatore: null })
   }
-  // Debug: log per verificare i dati della squadra
+  
   React.useEffect(() => {
     if (squadra) {
       console.log('🔍 SquadraDrawer - Squadra ricevuta:', squadra)

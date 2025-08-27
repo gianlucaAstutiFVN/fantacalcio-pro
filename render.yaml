@@ -3,7 +3,7 @@ services:
     name: fantacalcio-api
     env: node
     plan: free
-    buildCommand: npm run install-all && npm run build
+    buildCommand: cd server && npm install
     startCommand: cd server && npm start
     envVars:
       - key: NODE_ENV

@@ -23,7 +23,6 @@ import {
   ToggleButtonGroup,
 } from '@mui/material'
 import {
-  TrendingUp as TrendingUpIcon,
   Compare as CompareIcon,
   BarChart as BarChartIcon,
   PieChart as PieChartIcon,
@@ -44,7 +43,7 @@ interface StatisticheComparativeProps {
   onRefresh?: () => void
 }
 
-const StatisticheComparative: React.FC<StatisticheComparativeProps> = ({ onRefresh }) => {
+const StatisticheComparative: React.FC<StatisticheComparativeProps> = () => {
   const [statistiche, setStatistiche] = useState<StatisticaComparativa[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -85,7 +84,7 @@ const StatisticheComparative: React.FC<StatisticheComparativeProps> = ({ onRefre
     
     if (typeof aValue === 'string') {
       aValue = aValue.toLowerCase()
-      bValue = bValue.toLowerCase()
+      bValue = String(bValue).toLowerCase()
     }
     
     if (sortOrder === 'asc') {
@@ -96,7 +95,7 @@ const StatisticheComparative: React.FC<StatisticheComparativeProps> = ({ onRefre
   })
 
   const ruoli = ['portiere', 'difensore', 'centrocampista', 'attaccante']
-  const coloriRuoli = {
+  const coloriRuoli: Record<string, 'primary' | 'success' | 'warning' | 'error'> = {
     portiere: 'primary',
     difensore: 'success',
     centrocampista: 'warning',
@@ -156,7 +155,7 @@ const StatisticheComparative: React.FC<StatisticheComparativeProps> = ({ onRefre
             <ToggleButtonGroup
               value={viewMode}
               exclusive
-              onChange={(e, newMode) => newMode && setViewMode(newMode)}
+              onChange={(_, newMode) => newMode && setViewMode(newMode)}
               size="small"
             >
               <ToggleButton value="table" sx={{ color: 'white', borderColor: 'rgba(255,255,255,0.3)' }}>
@@ -246,7 +245,7 @@ const StatisticheComparative: React.FC<StatisticheComparativeProps> = ({ onRefre
                             <Chip
                               key={ruolo}
                               label={`${ruolo.charAt(0).toUpperCase()}${count}`}
-                              color={coloriRuoli[ruolo as keyof typeof coloriRuoli]}
+                              color={coloriRuoli[ruolo] || 'default'}
                               size="small"
                               variant="outlined"
                             />
@@ -328,7 +327,7 @@ const StatisticheComparative: React.FC<StatisticheComparativeProps> = ({ onRefre
                         <Box key={ruolo} sx={{ textAlign: 'center' }}>
                           <Chip
                             label={`${ruolo.charAt(0).toUpperCase()}`}
-                            color={coloriRuoli[ruolo as keyof typeof coloriRuoli]}
+                            color={coloriRuoli[ruolo] || 'default'}
                             size="small"
                             variant="outlined"
                           />
