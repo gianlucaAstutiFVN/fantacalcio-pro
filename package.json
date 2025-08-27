@@ -12,6 +12,7 @@
     "build:server": "cd server && npm run build",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
     "build-all": "npm run install-all && cd client && npm run build:prod",
+    "build-all:clean": "rm -rf node_modules package-lock.json && cd server && rm -rf node_modules package-lock.json && cd ../client && rm -rf node_modules package-lock.json && npm run install-all && cd client && npm run build:prod",
     "start": "node server/src/server.js",
     "start:render": "node server/src/server.js",
     "postinstall": "cd server && npm install"

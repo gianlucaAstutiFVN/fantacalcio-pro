@@ -27,12 +27,14 @@ const GiocatoriGrid: React.FC<GiocatoriGridProps> = ({
       <DataGrid
         rows={giocatori}
         columns={columns}
-        paginationModel={paginationModel}
+        page={paginationModel.page}
+        pageSize={paginationModel.pageSize}
         sortModel={sortingModel}
-        onPaginationModelChange={onPaginationModelChange}
+        onPageChange={(newPage) => onPaginationModelChange({ ...paginationModel, page: newPage })}
+        onPageSizeChange={(newPageSize) => onPaginationModelChange({ ...paginationModel, pageSize: newPageSize })}
         onSortModelChange={onSortingModelChange}
-        pageSizeOptions={[10, 25, 50, 100]}
-        disableRowSelectionOnClick
+        rowsPerPageOptions={[10, 25, 50, 100]}
+        disableSelectionOnClick
         density="standard"
         paginationMode="client"
         sortingMode="client"
@@ -47,7 +49,7 @@ const GiocatoriGrid: React.FC<GiocatoriGridProps> = ({
         disableDensitySelector
         
         // Disable animations for better performance
-        slotProps={{
+        componentsProps={{
           basePopper: {
             sx: {
               '& .MuiTooltip-tooltip': {
