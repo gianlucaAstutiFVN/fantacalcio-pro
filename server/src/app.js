@@ -19,11 +19,18 @@ if (process.env.NODE_ENV === 'production') {
   const clientDistPath = path.join(__dirname, '../../client/dist');
   const fs = require('fs');
   
+  console.log('🔍 Verificando cartella client/dist...');
+  console.log('📁 Percorso:', clientDistPath);
+  console.log('📂 Esiste:', fs.existsSync(clientDistPath));
+  
   // Verifica che la cartella client/dist esista
   if (fs.existsSync(clientDistPath)) {
+    console.log('✅ Cartella client/dist trovata. Servendo file statici...');
     app.use(express.static(clientDistPath));
   } else {
     console.warn('⚠️  Cartella client/dist non trovata. Il frontend non sarà disponibile.');
+    console.log('📋 Contenuto directory corrente:', fs.readdirSync(__dirname));
+    console.log('📋 Contenuto directory parent:', fs.readdirSync(path.join(__dirname, '../..')));
   }
 }
 
