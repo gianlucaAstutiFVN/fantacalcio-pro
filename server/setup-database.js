@@ -1,14 +1,6 @@
 #!/usr/bin/env node
 
-/**
- * Script di setup del database
- * 
- * Uso:
- * node setup-database.js init     - Inizializza database
- * node setup-database.js migrate  - Migra dati da CSV
- * node setup-database.js reset    - Reset completo
- * node setup-database.js full     - Init + Migrate (setup completo)
- */
+// Script di setup del database
 
 const Migration = require('./src/utils/migration');
 

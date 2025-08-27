@@ -5,9 +5,7 @@ class QuotazioniService {
         this.db = getDatabase();
     }
 
-    /**
-     * Ottiene tutte le quotazioni con informazioni giocatore
-     */
+    // Ottiene tutte le quotazioni con informazioni giocatore
     async getAllQuotazioni() {
         try {
             const query = `
@@ -44,9 +42,7 @@ class QuotazioniService {
         }
     }
 
-    /**
-     * Ottiene quotazioni per giocatore specifico
-     */
+    // Ottiene quotazioni per giocatore specifico
     async getQuotazioniByGiocatore(giocatoreId) {
         try {
             const query = `
@@ -72,9 +68,7 @@ class QuotazioniService {
         }
     }
 
-    /**
-     * Crea nuova quotazione
-     */
+    // Crea nuova quotazione
     async createQuotazione(quotazioneData) {
         try {
             const {
@@ -130,9 +124,7 @@ class QuotazioniService {
         }
     }
 
-    /**
-     * Aggiorna quotazione esistente
-     */
+    // Aggiorna quotazione esistente
     async updateQuotazione(id, quotazioneData) {
         try {
             const {
@@ -178,15 +170,12 @@ class QuotazioniService {
                 message: 'Quotazione aggiornata con successo',
                 data: { id }
             };
-        } catch (error) {
-            console.error('Errore nell\'aggiornamento quotazione:', error);
-            throw error;
-        }
+            } catch (error) {
+      throw error;
+    }
     }
 
-    /**
-     * Elimina quotazione
-     */
+    // Elimina quotazione
     async deleteQuotazione(id) {
         try {
             // Verifica che la quotazione esista
@@ -202,15 +191,12 @@ class QuotazioniService {
                 message: 'Quotazione eliminata con successo',
                 data: { id }
             };
-        } catch (error) {
-            console.error('Errore nell\'eliminazione quotazione:', error);
-            throw error;
-        }
+            } catch (error) {
+      throw error;
+    }
     }
 
-    /**
-     * Importa quotazioni da CSV
-     */
+    // Importa quotazioni da CSV
     async importFromCSV(csvData) {
         try {
             const results = [];
@@ -350,14 +336,11 @@ class QuotazioniService {
                 }
             };
         } catch (error) {
-            console.error('Errore nell\'importazione CSV:', error);
             throw new Error('Errore nell\'importazione del CSV');
         }
     }
 
-    /**
-     * Ottiene quotazioni con filtri
-     */
+    // Ottiene quotazioni con filtri
     async getQuotazioniWithFilters(filters = {}) {
         try {
             let query = `

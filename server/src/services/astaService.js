@@ -27,10 +27,9 @@ const registraAcquisto = async (acquistoData) => {
     await appendToCSV(astaFile, [acquistoData], CSV_HEADERS.giocatori);
     
     return acquistoData;
-  } catch (error) {
-    console.error('Errore nella registrazione dell\'acquisto:', error);
-    throw error;
-  }
+      } catch (error) {
+      throw error;
+    }
 };
 
 // Ottieni lo storico delle aste

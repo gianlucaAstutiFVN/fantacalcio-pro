@@ -7,9 +7,7 @@ class QuotazioniController {
         this.quotazioniService = new QuotazioniService();
     }
 
-    /**
-     * GET - Lista tutte le quotazioni
-     */
+    // GET - Lista tutte le quotazioni
     async getAllQuotazioni(req, res) {
         try {
             const result = await this.quotazioniService.getAllQuotazioni();
@@ -22,9 +20,7 @@ class QuotazioniController {
         }
     }
 
-    /**
-     * GET - Quotazioni per giocatore specifico
-     */
+    // GET - Quotazioni per giocatore specifico
     async getQuotazioniByGiocatore(req, res) {
         try {
             const { giocatoreId } = req.params;
@@ -46,9 +42,7 @@ class QuotazioniController {
         }
     }
 
-    /**
-     * GET - Quotazioni con filtri
-     */
+    // GET - Quotazioni con filtri
     async getQuotazioniWithFilters(req, res) {
         try {
             const filters = {
@@ -68,9 +62,7 @@ class QuotazioniController {
         }
     }
 
-    /**
-     * POST - Crea nuova quotazione
-     */
+    // POST - Crea nuova quotazione
     async createQuotazione(req, res) {
         try {
             const {
@@ -124,9 +116,7 @@ class QuotazioniController {
         }
     }
 
-    /**
-     * PUT - Aggiorna quotazione esistente
-     */
+    // PUT - Aggiorna quotazione esistente
     async updateQuotazione(req, res) {
         try {
             const { id } = req.params;
@@ -179,9 +169,7 @@ class QuotazioniController {
         }
     }
 
-    /**
-     * DELETE - Elimina quotazione
-     */
+    // DELETE - Elimina quotazione
     async deleteQuotazione(req, res) {
         try {
             const { id } = req.params;
@@ -210,9 +198,7 @@ class QuotazioniController {
         }
     }
 
-    /**
-     * POST - Upload CSV per importazione quotazioni
-     */
+    // POST - Upload CSV per importazione quotazioni
     async uploadCSV(req, res) {
         try {
             if (!req.file) {
@@ -238,12 +224,12 @@ class QuotazioniController {
                         // Importa i dati
                         const result = await this.quotazioniService.importFromCSV(csvData);
                         res.json(result);
-                                        } catch (error) {
-            res.status(500).json({
-              success: false,
-              error: error.message || 'Errore nell\'importazione del CSV'
-            });
-          }
+                    } catch (error) {
+                        res.status(500).json({
+                            success: false,
+                            error: error.message || 'Errore nell\'importazione del CSV'
+                        });
+                    }
                 })
                 .on('error', (error) => {
                     // Rimuovi il file temporaneo in caso di errore
@@ -264,9 +250,7 @@ class QuotazioniController {
         }
     }
 
-    /**
-     * GET - Statistiche quotazioni
-     */
+    // GET - Statistiche quotazioni
     async getQuotazioniStats(req, res) {
         try {
             // Questa è una versione semplificata, puoi espanderla
