@@ -1,4 +1,4 @@
-# Fix Finale Deployment Render.com ✅
+# Soluzione Completa Deployment Render.com ✅
 
 ## Problema Risolto
 
@@ -30,6 +30,16 @@ services:
         value: https://fantacalcio-client.onrender.com
       - key: LOG_LEVEL
         value: info
+
+  - type: web
+    name: fantacalcio-client
+    env: static
+    plan: free
+    buildCommand: cd client && npm install && npm run build:prod
+    staticPublishPath: ./client/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://fantacalcio-api.onrender.com
 ```
 
 ### 3. Script di Avvio
@@ -89,9 +99,10 @@ Il server funziona correttamente:
 
 - ✅ Il server modulare in `server/src/server.js` è funzionante
 - ✅ Le dipendenze vengono installate correttamente
-- ✅ Il comando di avvio è esplicito e diretto
+- ✅ Il comando di avvio è semplice e diretto: `npm start`
 - ✅ La configurazione CORS è corretta per la produzione
 - ✅ Le variabili d'ambiente sono configurate
+- ✅ Il `render.yaml` è nella root del repository
 
 ## Troubleshooting
 
@@ -100,5 +111,13 @@ Se il problema persiste:
 2. Controlla che non ci siano file `server/index.js` rimasti
 3. Verifica che il commit includa tutte le modifiche
 4. Controlla i logs completi su Render per altri errori
+5. Assicurati che Render stia usando il Blueprint deployment
+
+## Configurazione Render Dashboard
+
+Se Render continua a ignorare il `render.yaml`, configura manualmente nel dashboard:
+
+**Build Command:** `npm run install-all`
+**Start Command:** `npm start`
 
 Il deployment dovrebbe ora funzionare senza problemi! 🎉

@@ -11,7 +11,7 @@
     "build:client": "cd client && npm run build:prod",
     "build:server": "cd server && npm run build",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
-    "start": "cd server && node src/server.js",
+    "start": "node server/src/server.js",
     "postinstall": "cd server && npm install"
   },
   "keywords": ["fantacalcio", "asta", "calcio"],
