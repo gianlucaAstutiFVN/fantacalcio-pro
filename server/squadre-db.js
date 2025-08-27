@@ -55,10 +55,7 @@ const getAllSquadre = () => {
   
   squadreConStats.forEach(s => {
     if (s.giocatori && s.giocatori.length > 0) {
-      console.log(`🏆 Squadra ${s.nome}: ${s.giocatori.length} giocatori`)
-      s.giocatori.forEach(g => {
-        console.log(`  - ${g.nome} (${g.ruolo}) - €${g.valore}`)
-      })
+      
     }
   })
   

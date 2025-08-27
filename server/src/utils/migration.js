@@ -11,13 +11,13 @@ class Migration {
   // Inizializza il database e crea le tabelle
   async initializeDatabase() {
     try {
-      console.log('🚀 Inizializzazione database...');
+    
       
       // Connetti al database
       await this.db.connect();
       
       // Rimuovi le tabelle esistenti per un setup pulito
-      console.log('🧹 Rimozione tabelle esistenti...');
+  
       const dropQueries = [
         'DROP TABLE IF EXISTS asta_storico',
         'DROP TABLE IF EXISTS acquisti', 
@@ -58,7 +58,7 @@ class Migration {
       const schema = fs.readFileSync(schemaPath, 'utf8');
       
       // Parsing semplice ma efficace per SQLite
-      console.log('📋 Esecuzione schema database...');
+  
       
       // Rimuovi commenti
       const cleanSchema = schema.replace(/--.*$/gm, '');
@@ -112,7 +112,7 @@ class Migration {
         }
       }
       
-      console.log('✅ Database inizializzato con successo');
+  
       return true;
     } catch (error) {
       console.error('❌ Errore inizializzazione database:', error);
@@ -123,7 +123,7 @@ class Migration {
   // Migra i dati dai CSV al database
   async migrateFromCSV() {
     try {
-      console.log('📊 Migrazione dati da CSV...');
+  
       
       // Migra giocatori dalle quotazioni 2025
       await this.migrateGiocatoriFromQuotazioni();
@@ -131,7 +131,7 @@ class Migration {
       // Crea squadre di esempio
       await this.createSampleSquadre();
       
-      console.log('✅ Migrazione completata con successo');
+  
       return true;
     } catch (error) {
       console.error('❌ Errore migrazione:', error);
@@ -145,11 +145,11 @@ class Migration {
     const filePath = path.join(dataDir, 'Quotazioni_fantacalcio_2025.csv');
     
     if (!fs.existsSync(filePath)) {
-      console.log('⚠️  File Quotazioni_fantacalcio_2025.csv non trovato, salto...');
+  
       return;
     }
 
-    console.log('👥 Migrazione giocatori da Quotazioni_fantacalcio_2025.csv...');
+
     
     const giocatori = await this.readCSV(filePath);
     
@@ -190,14 +190,14 @@ class Migration {
       ]);
     }
     
-    console.log(`✅ Migrati ${giocatori.length} giocatori da Quotazioni_fantacalcio_2025.csv`);
+
   }
 
 
 
   // Crea squadre di esempio
   async createSampleSquadre() {
-    console.log('🏆 Creazione squadre di esempio...');
+
     
     const squadreEsempio = [
       { nome: 'I Fenomeni', proprietario: 'Mario Rossi' },
@@ -217,7 +217,7 @@ class Migration {
       }
     }
     
-    console.log('✅ Squadre di esempio create');
+
   }
 
   // Utility per leggere CSV
@@ -235,7 +235,7 @@ class Migration {
   // Reset completo del database
   async resetDatabase() {
     try {
-      console.log('🗑️  Reset database...');
+  
       
       // Connetti al database se non è già connesso
       if (!this.db.db) {
@@ -248,7 +248,7 @@ class Migration {
         await this.db.run(`DELETE FROM ${table}`);
       }
       
-      console.log('✅ Database resettato');
+  
       return true;
     } catch (error) {
       console.error('❌ Errore reset database:', error);

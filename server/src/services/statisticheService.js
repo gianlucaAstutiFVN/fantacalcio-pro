@@ -7,7 +7,7 @@ let squadreDB;
 try {
   squadreDB = require('../../squadre-db');
 } catch (error) {
-  console.log('Sistema squadre-db non disponibile, uso solo database');
+  
 }
 
 // Ottieni statistiche generali
@@ -58,7 +58,7 @@ const getAllSquadre = async () => {
       return await squadreService.getAllSquadre();
     }
   } catch (error) {
-    console.log('Database squadre non disponibile, uso squadre-db');
+    
   }
   
   // Fallback al sistema squadre-db

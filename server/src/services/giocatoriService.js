@@ -35,7 +35,6 @@ class GiocatoriService {
       
       return giocatori;
     } catch (error) {
-      console.error('❌ Errore getAllGiocatori:', error);
       throw error;
     }
   }
@@ -71,7 +70,6 @@ class GiocatoriService {
       
       return giocatori;
     } catch (error) {
-      console.error('❌ Errore getGiocatoriByRuolo:', error);
       throw error;
     }
   }
@@ -97,7 +95,6 @@ class GiocatoriService {
       
       return await this.db.all(query);
     } catch (error) {
-      console.error('❌ Errore getGiocatoriInWishlist:', error);
       throw error;
     }
   }
@@ -122,7 +119,6 @@ class GiocatoriService {
       
       return await this.db.get(query, [id]);
     } catch (error) {
-      console.error('❌ Errore getGiocatoreById:', error);
       throw error;
     }
   }
@@ -159,7 +155,6 @@ class GiocatoriService {
         return result.changes > 0;
       }
     } catch (error) {
-      console.error('❌ Errore updateNote:', error);
       throw error;
     }
   }
@@ -178,7 +173,6 @@ class GiocatoriService {
       const result = await this.db.run(query, [fantasquadra, id]);
       return result.changes > 0;
     } catch (error) {
-      console.error('❌ Errore updateFantasquadra:', error);
       throw error;
     }
   }
@@ -197,7 +191,6 @@ class GiocatoriService {
       const result = await this.db.get(query, [giocatoreId]);
       return result.count > 0;
     } catch (error) {
-      console.error('❌ Errore isInWishlist:', error);
       return false;
     }
   }

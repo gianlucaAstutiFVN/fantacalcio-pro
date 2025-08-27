@@ -48,19 +48,11 @@ class SquadreService {
         squadra.budget_residuo = squadra.budget - spesaTotale;
         squadra.giocatori = giocatori;
         squadra.spesaTotale = spesaTotale;
-        
-        
-        if (giocatori.length > 0) {
-          console.log(`🏆 Squadra ${squadra.nome}: ${giocatori.length} giocatori`)
-          giocatori.forEach(g => {
-            console.log(`  - ${g.nome} (${g.ruolo}) - €${g.valore}`)
-          })
-        }
+  
       }
       
       return squadre;
     } catch (error) {
-      console.error('❌ Errore getAllSquadre:', error);
       throw error;
     }
   }
@@ -111,7 +103,6 @@ class SquadreService {
       
       return squadra;
     } catch (error) {
-      console.error('❌ Errore getSquadraById:', error);
       throw error;
     }
   }
@@ -135,7 +126,6 @@ class SquadreService {
       
       return result.lastID;
     } catch (error) {
-      console.error('❌ Errore createSquadra:', error);
       throw error;
     }
   }
@@ -161,7 +151,6 @@ class SquadreService {
       
       return result.changes > 0;
     } catch (error) {
-      console.error('❌ Errore updateSquadra:', error);
       throw error;
     }
   }
@@ -196,7 +185,6 @@ class SquadreService {
               'UPDATE giocatori SET status = ?, fantasquadra = NULL WHERE id = ?',
               ['disponibile', giocatore.id]
             );
-            console.log(`🔄 Giocatore ${giocatore.nome} rimesso disponibile`);
           }
         }
         
@@ -215,16 +203,12 @@ class SquadreService {
         
         await this.db.run('COMMIT');
         
-        console.log(`✅ Squadra ${squadra.nome} eliminata con successo`);
-        console.log(`📊 ${giocatoriAssegnati.length} giocatori rimessi disponibili`);
-        
         return result.changes > 0;
       } catch (error) {
         await this.db.run('ROLLBACK');
         throw error;
       }
     } catch (error) {
-      console.error('❌ Errore deleteSquadra:', error);
       throw error;
     }
   }
@@ -260,7 +244,6 @@ class SquadreService {
       await this.db.run(query, [giocatoreId]);
       return true;
     } catch (error) {
-      console.error('❌ Errore addToWishlist:', error);
       throw error;
     }
   }
@@ -268,31 +251,21 @@ class SquadreService {
   // Rimuove giocatore dalla wishlist globale
   async removeFromWishlist(giocatoreId) {
     try {
-      console.log('🔍 Tentativo di rimuovere dalla wishlist:', giocatoreId);
-      
       await this.db.connect();
-      console.log('✅ Database connesso');
       
       // Prima controlla se il giocatore esiste nella wishlist
       const checkQuery = 'SELECT COUNT(*) as count FROM wishlist WHERE giocatore_id = ?';
       const checkResult = await this.db.get(checkQuery, [giocatoreId]);
-      console.log('🔍 Giocatore trovato nella wishlist:', checkResult?.count || 0);
       
       if (!checkResult || checkResult.count === 0) {
-        console.log('⚠️ Giocatore non trovato nella wishlist');
         return false;
       }
       
       const query = 'DELETE FROM wishlist WHERE giocatore_id = ?';
-      console.log('🗑️ Esecuzione query DELETE:', query, 'con parametro:', giocatoreId);
-      
       const result = await this.db.run(query, [giocatoreId]);
-      console.log('✅ Risultato DELETE:', result);
       
       return result.changes > 0;
     } catch (error) {
-      console.error('❌ Errore removeFromWishlist:', error);
-      console.error('❌ Stack trace:', error.stack);
       throw error;
     }
   }
@@ -312,7 +285,6 @@ class SquadreService {
       
       return await this.db.all(query);
     } catch (error) {
-      console.error('❌ Errore getWishlist:', error);
       throw error;
     }
   }
@@ -331,7 +303,6 @@ class SquadreService {
       const result = await this.db.get(query, [giocatoreId]);
       return result.count > 0;
     } catch (error) {
-      console.error('❌ Errore isInWishlist:', error);
       return false;
     }
   }
@@ -397,7 +368,6 @@ class SquadreService {
         throw error;
       }
     } catch (error) {
-      console.error('❌ Errore acquistaGiocatore:', error);
       throw error;
     }
   }
@@ -418,7 +388,6 @@ class SquadreService {
       
       return await this.db.all(query, [squadraId]);
     } catch (error) {
-      console.error('❌ Errore getAcquistiSquadra:', error);
       throw error;
     }
   }
@@ -436,7 +405,6 @@ class SquadreService {
       
       return await this.db.get(query, [id]);
     } catch (error) {
-      console.error('❌ Errore getGiocatoreById:', error);
       throw error;
     }
   }
@@ -504,16 +472,12 @@ class SquadreService {
         
         await this.db.run('COMMIT');
         
-        console.log(`✅ Giocatore ${giocatore.nome} assegnato alla squadra ${squadra.nome} per €${prezzo}`);
-        console.log(`📊 Budget residuo squadra: €${squadra.budget_residuo - prezzo}`);
-        
         return true;
       } catch (error) {
         await this.db.run('ROLLBACK');
         throw error;
       }
     } catch (error) {
-      console.error('❌ Errore assegnaGiocatore:', error);
       throw error;
     }
   }
@@ -583,10 +547,6 @@ class SquadreService {
         
         await this.db.run('COMMIT');
         
-        console.log(`🔄 Giocatore ${giocatore.nome} svincolato dalla squadra ${squadra.nome}`);
-        console.log(`💰 Budget restituito: €${prezzoRimborso}`);
-        console.log(`📊 Nuovo budget residuo squadra: €${squadra.budget_residuo + prezzoRimborso}`);
-        
         return {
           success: true,
           giocatore: giocatore.nome,
@@ -599,7 +559,6 @@ class SquadreService {
         throw error;
       }
     } catch (error) {
-      console.error('❌ Errore svincolaGiocatore:', error);
       throw error;
     }
   }

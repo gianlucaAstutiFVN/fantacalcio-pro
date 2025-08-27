@@ -17,7 +17,6 @@ class GiocatoriController {
         data: giocatori
       });
     } catch (error) {
-      console.error('❌ Errore getAllGiocatori:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -41,7 +40,6 @@ class GiocatoriController {
         data: giocatori
       });
     } catch (error) {
-      console.error('❌ Errore getGiocatoriByRuolo:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -60,7 +58,6 @@ class GiocatoriController {
         data: giocatori
       });
     } catch (error) {
-      console.error('❌ Errore getGiocatoriInWishlist:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -86,7 +83,6 @@ class GiocatoriController {
         data: giocatore
       });
     } catch (error) {
-      console.error('❌ Errore getGiocatoreById:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -122,7 +118,6 @@ class GiocatoriController {
         data: { id, note }
       });
     } catch (error) {
-      console.error('❌ Errore updateNote:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -158,7 +153,6 @@ class GiocatoriController {
         data: { id, fantasquadra }
       });
     } catch (error) {
-      console.error('❌ Errore updateFantasquadra:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'
@@ -193,7 +187,6 @@ class GiocatoriController {
             const result = await giocatoriService.importFromCSV(csvData);
             res.json(result);
           } catch (error) {
-            console.error('Errore nell\'importazione CSV giocatori:', error);
             res.status(500).json({
               success: false,
               error: error.message || 'Errore nell\'importazione del CSV giocatori'
@@ -206,14 +199,12 @@ class GiocatoriController {
             fs.unlinkSync(req.file.path);
           }
           
-          console.error('Errore nella lettura CSV giocatori:', error);
           res.status(400).json({
             success: false,
             error: 'Errore nella lettura del file CSV giocatori'
           });
         });
     } catch (error) {
-      console.error('Errore controller uploadCSV giocatori:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'

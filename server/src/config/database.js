@@ -25,7 +25,7 @@ class Database {
           console.error('Errore connessione database:', err);
           reject(err);
         } else {
-          console.log('✅ Connesso al database SQLite');
+          
           // Abilita foreign keys
           this.db.run('PRAGMA foreign_keys = ON');
           resolve(this.db);
@@ -43,7 +43,7 @@ class Database {
             console.error('Errore chiusura database:', err);
             reject(err);
           } else {
-            console.log('🔒 Database chiuso');
+
             resolve();
           }
         });
