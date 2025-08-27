@@ -24,4 +24,35 @@ router.get('/health', (req, res) => {
   });
 });
 
+// Route per inizializzare il database (solo in produzione)
+router.post('/init-db', async (req, res) => {
+  try {
+    if (process.env.NODE_ENV !== 'production') {
+      return res.status(403).json({ 
+        success: false, 
+        error: 'Endpoint disponibile solo in produzione' 
+      });
+    }
+
+    const Migration = require('../../utils/migration');
+    const migration = new Migration();
+    
+    await migration.initializeDatabase();
+    await migration.migrateFromCSV();
+    
+    res.json({ 
+      success: true, 
+      message: 'Database inizializzato con successo',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Errore inizializzazione database:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Errore durante l\'inizializzazione del database',
+      details: error.message
+    });
+  }
+});
+
 module.exports = router;
