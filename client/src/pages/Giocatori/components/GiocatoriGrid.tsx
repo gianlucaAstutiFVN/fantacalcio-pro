@@ -1,5 +1,5 @@
 import React from 'react'
-import { Paper } from '@mui/material'
+import { Paper, useTheme, useMediaQuery } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import { Giocatore } from '../../../types'
 
@@ -22,8 +22,17 @@ const GiocatoriGrid: React.FC<GiocatoriGridProps> = ({
   onSortingModelChange,
   getRowClassName,
 }) => {
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  
   return (
-    <Paper sx={{ height: 600, width: '100%' }}>
+    <Paper sx={{ 
+      height: isMobile ? 500 : 600, 
+      width: '100%',
+      '& .MuiDataGrid-root': {
+        fontSize: isMobile ? '0.75rem' : '0.875rem',
+      }
+    }}>
       <DataGrid
         rows={giocatori}
         columns={columns}
@@ -33,14 +42,14 @@ const GiocatoriGrid: React.FC<GiocatoriGridProps> = ({
         onPageChange={(newPage) => onPaginationModelChange({ ...paginationModel, page: newPage })}
         onPageSizeChange={(newPageSize) => onPaginationModelChange({ ...paginationModel, pageSize: newPageSize })}
         onSortModelChange={onSortingModelChange}
-        rowsPerPageOptions={[10, 25, 50, 100]}
+        rowsPerPageOptions={isMobile ? [10, 25] : [10, 25, 50, 100]}
         disableSelectionOnClick
-        density="standard"
+        density={'comfortable'}
         paginationMode="client"
         sortingMode="client"
         rowCount={giocatori.length}
         getRowClassName={getRowClassName}
-        rowHeight={52}
+        rowHeight={60}
         
         // Performance optimizations
         disableColumnMenu
@@ -66,16 +75,21 @@ const GiocatoriGrid: React.FC<GiocatoriGridProps> = ({
             borderBottom: '1px solid #e0e0e0',
             transition: 'none !important',
             animation: 'none !important',
+            fontSize: isMobile ? '0.75rem' : '0.875rem',
+            padding: isMobile ? '4px 8px' : '8px 16px',
           },
           '& .MuiDataGrid-columnHeaders': {
             backgroundColor: '#f5f5f5',
             borderBottom: '2px solid #e0e0e0',
             transition: 'none !important',
+            fontSize: isMobile ? '0.75rem' : '0.875rem',
+            padding: isMobile ? '4px 8px' : '8px 16px',
           },
           '& .MuiDataGrid-footerContainer': {
             borderTop: '2px solid #e0e0e0',
             backgroundColor: '#f5f5f5',
             transition: 'none !important',
+            fontSize: isMobile ? '0.75rem' : '0.875rem',
           },
           '& .MuiDataGrid-row': {
             transition: 'none !important',

@@ -3,10 +3,23 @@ import {
   Chip,
   Typography,
   IconButton,
+  Tooltip,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material'
-import { Edit as EditIcon } from '@mui/icons-material'
+import { 
+  MoreVert as MoreVertIcon,
+  EditNote as EditNoteIcon,
+  Star as StarIcon,
+  Info as InfoIcon,
+} from '@mui/icons-material'
 import { GridColDef } from '@mui/x-data-grid'
+import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { Giocatore } from '../../../types'
+import { squadreSerieA } from '../../Formazioni/data/squadreData'
 import ActionButtons from './ActionDataGrid/ActionButtons'
 import WishlistManager from './ActionDataGrid/WishlistManager'
 
@@ -15,8 +28,114 @@ interface GiocatoriColumnsProps {
   onRefresh?: () => void
   onAssegnaGiocatore: (giocatore: Giocatore) => void
   onSvincolaGiocatore: (giocatore: Giocatore) => void
-  onEditNote: (giocatore: Giocatore) => void
-  onEditValutazione: (giocatore: Giocatore) => void
+  onEditAllFields: (giocatore: Giocatore) => void
+}
+
+// Componente separato per la cella delle azioni
+const ActionsCell = ({ 
+  giocatore, 
+  isAcquistato, 
+  onAssegnaGiocatore, 
+  onSvincolaGiocatore, 
+  onEditAllFields 
+}: {
+  giocatore: Giocatore
+  isAcquistato: boolean
+  onAssegnaGiocatore: (giocatore: Giocatore) => void
+  onSvincolaGiocatore: (giocatore: Giocatore) => void
+  onEditAllFields: (giocatore: Giocatore) => void
+}) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+  
+  const handleEditFields = () => {
+    onEditAllFields(giocatore)
+    handleClose()
+  }
+  
+  const handleAssegna = () => {
+    onAssegnaGiocatore(giocatore)
+    handleClose()
+  }
+  
+  const handleSvincola = () => {
+    onSvincolaGiocatore(giocatore)
+    handleClose()
+  }
+  
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <ActionButtons
+        giocatore={giocatore}
+        isAcquistato={isAcquistato}
+        onAssegnaGiocatore={onAssegnaGiocatore}
+        onSvincolaGiocatore={onSvincolaGiocatore}
+      />
+      
+      <Tooltip title="Altre azioni">
+        <IconButton
+          size="small"
+          onClick={handleClick}
+          sx={{ 
+            p: 0.5,
+            '&:hover': { 
+              backgroundColor: 'primary.light',
+              color: 'primary.contrastText'
+            }
+          }}
+        >
+          <MoreVertIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+      
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <MenuItem onClick={handleEditFields}>
+          <ListItemIcon>
+            <EditNoteIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Modifica Campi</ListItemText>
+        </MenuItem>
+        
+        {!isAcquistato && (
+          <MenuItem onClick={handleAssegna}>
+            <ListItemIcon>
+              <StarIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Assegna Giocatore</ListItemText>
+          </MenuItem>
+        )}
+        
+        {isAcquistato && (
+          <MenuItem onClick={handleSvincola}>
+            <ListItemIcon>
+              <InfoIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Svincola Giocatore</ListItemText>
+          </MenuItem>
+        )}
+      </Menu>
+    </Box>
+  )
 }
 
 export const useGiocatoriColumns = ({
@@ -24,11 +143,9 @@ export const useGiocatoriColumns = ({
   onRefresh,
   onAssegnaGiocatore,
   onSvincolaGiocatore,
-  onEditNote,
-  onEditValutazione,
+  onEditAllFields,
 }: GiocatoriColumnsProps): GridColDef[] => {
-  
-
+  const navigate = useNavigate()
   
   const getRuoloColor = (ruolo: string) => {
     switch (ruolo.toLowerCase()) {
@@ -46,6 +163,19 @@ export const useGiocatoriColumns = ({
 
   const isGiocatoreInWishlist = (giocatore: Giocatore) => {
     return giocatore.inWishlist
+  }
+
+  const handleSquadraClick = (squadraNome: string) => {
+    // Find the squad by name and navigate to its detail page
+    const squadra = squadreSerieA.find(s => 
+      s.nome.toLowerCase() === squadraNome.toLowerCase()
+    )
+    
+    if (squadra) {
+      navigate(`/formazioni/${squadra.id}`)
+    } else {
+      console.warn(`Squadra non trovata: ${squadraNome}`)
+    }
   }
 
   return [
@@ -70,6 +200,14 @@ export const useGiocatoriColumns = ({
           label={params.value} 
           size="small" 
           variant="outlined"
+          onClick={() => handleSquadraClick(params.value)}
+          sx={{ 
+            cursor: 'pointer',
+            '&:hover': { 
+              backgroundColor: 'primary.light',
+              color: 'primary.contrastText'
+            }
+          }}
         />
       ),
     },
@@ -87,18 +225,6 @@ export const useGiocatoriColumns = ({
       ),
     },
     {
-      field: 'unveil_fvm',
-      headerName: 'Unveil FVM',
-      flex: 0.8,
-      minWidth: 100,
-      type: 'number',
-      renderCell: (params) => (
-        <Typography variant="body2" color="primary">
-          {params.value || '-'}
-        </Typography>
-      ),
-    },
-    {
       field: 'gazzetta',
       headerName: 'Gazzetta',
       flex: 0.8,
@@ -111,26 +237,56 @@ export const useGiocatoriColumns = ({
       ),
     },
     {
-      field: 'gazzetta_fascia',
-      headerName: 'Gazzetta Fascia',
+      field: 'fascia',
+      headerName: 'Fascia',
       flex: 0.8,
       minWidth: 100,
       renderCell: (params) => (
-        <Chip
-          label={params.value || '-'}
-          size="small"
-          color={params.value === '1' ? 'error' : params.value === '2' ? 'warning' : params.value === '3' ? 'info' : 'success'}
-          variant="outlined"
-        />
+        <Typography 
+          variant="body2" 
+          color="primary"
+          sx={{ 
+            cursor: 'pointer',
+            '&:hover': { 
+              backgroundColor: 'primary.light', 
+              color: 'primary.contrastText',
+              borderRadius: 1, 
+              px: 1,
+              py: 0.5
+            },
+            transition: 'all 0.2s ease-in-out'
+          }}
+          onClick={() => onEditAllFields(params.row)}
+        >
+          {params.value || '-'}
+        </Typography>
       ),
     },
     {
-      field: 'pazzidifanta',
-      headerName: 'Pazzi di Fanta',
+      field: 'consiglio',
+      headerName: 'Consiglio',
       flex: 1,
-      minWidth: 120,
+      minWidth: 150,
       renderCell: (params) => (
-        <Typography variant="body2" color="secondary">
+        <Typography 
+          variant="body2" 
+          sx={{ 
+            maxWidth: 150, 
+            overflow: 'hidden', 
+            textOverflow: 'ellipsis',
+            cursor: 'pointer',
+            '&:hover': { 
+              backgroundColor: 'primary.light', 
+              color: 'primary.contrastText',
+              borderRadius: 1, 
+              px: 1,
+              py: 0.5
+            },
+            transition: 'all 0.2s ease-in-out'
+          }}
+          onClick={() => onEditAllFields(params.row)}
+          title={params.value || ''}
+        >
           {params.value || '-'}
         </Typography>
       ),
@@ -142,26 +298,24 @@ export const useGiocatoriColumns = ({
       minWidth: 100,
       type: 'number',
       renderCell: (params) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography 
-            variant="body2" 
-            color="success.main"
-            sx={{ 
-              cursor: 'pointer',
-              '&:hover': { backgroundColor: '#f5f5f5', borderRadius: 1, px: 1 }
-            }}
-            onClick={() => onEditValutazione(params.row)}
-          >
-            {params.value || '-'}
-          </Typography>
-          <IconButton
-            size="small"
-            onClick={() => onEditValutazione(params.row)}
-            sx={{ p: 0.5 }}
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-        </Box>
+        <Typography 
+          variant="body2" 
+          color="success.main"
+          sx={{ 
+            cursor: 'pointer',
+            '&:hover': { 
+              backgroundColor: 'success.light', 
+              color: 'success.contrastText',
+              borderRadius: 1, 
+              px: 1,
+              py: 0.5
+            },
+            transition: 'all 0.2s ease-in-out'
+          }}
+          onClick={() => onEditAllFields(params.row)}
+        >
+          {params.value || '-'}
+        </Typography>
       ),
     },
     {
@@ -170,28 +324,27 @@ export const useGiocatoriColumns = ({
       flex: 1,
       minWidth: 250,
       renderCell: (params) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography 
-            variant="body2" 
-            sx={{ 
-              maxWidth: 150, 
-              overflow: 'hidden', 
-              textOverflow: 'ellipsis',
-              cursor: 'pointer',
-              '&:hover': { backgroundColor: '#f5f5f5', borderRadius: 1, px: 1 }
-            }}
-            onClick={() => onEditNote(params.row)}
-          >
-            {params.value || '-'}
-          </Typography>
-          <IconButton
-            size="small"
-            onClick={() => onEditNote(params.row)}
-            sx={{ p: 0.5 }}
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-        </Box>
+        <Typography 
+          variant="body2" 
+          sx={{ 
+            maxWidth: 150, 
+            overflow: 'hidden', 
+            textOverflow: 'ellipsis',
+            cursor: 'pointer',
+            '&:hover': { 
+              backgroundColor: 'primary.light', 
+              color: 'primary.contrastText',
+              borderRadius: 1, 
+              px: 1,
+              py: 0.5
+            },
+            transition: 'all 0.2s ease-in-out'
+          }}
+          onClick={() => onEditAllFields(params.row)}
+          title={params.value || ''}
+        >
+          {params.value || '-'}
+        </Typography>
       ),
     },
     {
@@ -259,11 +412,12 @@ export const useGiocatoriColumns = ({
       minWidth: 120,
       sortable: false,
       renderCell: (params) => (
-        <ActionButtons
+        <ActionsCell
           giocatore={params.row}
           isAcquistato={isGiocatoreAcquistato(params.row)}
           onAssegnaGiocatore={onAssegnaGiocatore}
           onSvincolaGiocatore={onSvincolaGiocatore}
+          onEditAllFields={onEditAllFields}
         />
       ),
     },

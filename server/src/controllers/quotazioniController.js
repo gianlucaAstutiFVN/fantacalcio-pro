@@ -48,7 +48,7 @@ class QuotazioniController {
             const filters = {
                 ruolo: req.query.ruolo,
                 squadra: req.query.squadra,
-                fonte: req.query.fonte,
+                // fonte: req.query.fonte, -- Removed: fonte column no longer exists
                 preferito: req.query.preferito !== undefined ? req.query.preferito === 'true' : undefined
             };
 
@@ -67,15 +67,13 @@ class QuotazioniController {
         try {
             const {
                 giocatore_id,
-                fantacalciopedia,
-                pazzidifanta,
-                stadiosport,
-                unveil,
                 gazzetta,
+                fascia,
+                consiglio,
+                voto,
                 mia_valutazione,
                 note,
-                preferito,
-                fonte
+                preferito
             } = req.body;
 
             // Validazione campi obbligatori
@@ -88,15 +86,13 @@ class QuotazioniController {
 
             const quotazioneData = {
                 giocatore_id,
-                fantacalciopedia,
-                pazzidifanta,
-                stadiosport,
-                unveil,
                 gazzetta,
+                fascia,
+                consiglio,
+                voto,
                 mia_valutazione: mia_valutazione ? parseInt(mia_valutazione) : null,
                 note,
-                preferito: preferito === true || preferito === 'true' || preferito === 1 ? 1 : 0,
-                fonte: fonte || 'manuale'
+                preferito: preferito === true || preferito === 'true' || preferito === 1 ? 1 : 0
             };
 
             const result = await this.quotazioniService.createQuotazione(quotazioneData);
@@ -129,27 +125,23 @@ class QuotazioniController {
             }
 
             const {
-                fantacalciopedia,
-                pazzidifanta,
-                stadiosport,
-                unveil,
                 gazzetta,
+                fascia,
+                consiglio,
+                voto,
                 mia_valutazione,
                 note,
-                preferito,
-                fonte
+                preferito
             } = req.body;
 
             const quotazioneData = {
-                fantacalciopedia,
-                pazzidifanta,
-                stadiosport,
-                unveil,
                 gazzetta,
+                fascia,
+                consiglio,
+                voto,
                 mia_valutazione: mia_valutazione ? parseInt(mia_valutazione) : null,
                 note,
-                preferito: preferito !== undefined ? (preferito === true || preferito === 'true' || preferito === 1 ? 1 : 0) : undefined,
-                fonte
+                preferito: preferito !== undefined ? (preferito === true || preferito === 'true' || preferito === 1 ? 1 : 0) : undefined
             };
 
             const result = await this.quotazioniService.updateQuotazione(id, quotazioneData);
@@ -208,6 +200,7 @@ class QuotazioniController {
                 });
             }
 
+            console.log('📁 Upload CSV iniziato per file:', req.file.originalname);
             const csvData = [];
             
             // Leggi il file CSV
@@ -221,10 +214,31 @@ class QuotazioniController {
                         // Rimuovi il file temporaneo
                         fs.unlinkSync(req.file.path);
                         
+                        console.log(`📊 CSV letto con successo: ${csvData.length} righe`);
+                        
+                        // Log delle colonne disponibili per debug
+                        if (csvData.length > 0) {
+                            const columns = Object.keys(csvData[0]);
+                            console.log('📋 Colonne CSV rilevate:', columns);
+                            
+                            // Verifica se il CSV ha colonne FVM o Fantagazzetta
+                            if (columns.includes('FVM')) {
+                                console.log('🔄 Rilevata colonna FVM - verrà mappata a fantagazzetta');
+                            }
+                            if (columns.includes('Fantagazzetta')) {
+                                console.log('🔄 Rilevata colonna Fantagazzetta');
+                            }
+                            if (columns.includes('Gazzetta')) {
+                                console.log('🔄 Rilevata colonna Gazzetta');
+                            }
+                        }
+                        
                         // Importa i dati
                         const result = await this.quotazioniService.importFromCSV(csvData);
+                        console.log('✅ Importazione CSV completata con successo');
                         res.json(result);
                     } catch (error) {
+                        console.error('❌ Errore durante l\'importazione CSV:', error);
                         res.status(500).json({
                             success: false,
                             error: error.message || 'Errore nell\'importazione del CSV'
@@ -237,12 +251,14 @@ class QuotazioniController {
                         fs.unlinkSync(req.file.path);
                     }
                     
+                    console.error('❌ Errore nella lettura del file CSV:', error);
                     res.status(400).json({
                         success: false,
                         error: 'Errore nella lettura del file CSV'
                     });
                 });
         } catch (error) {
+            console.error('❌ Errore generale durante l\'upload CSV:', error);
             res.status(500).json({
                 success: false,
                 error: error.message || 'Errore interno del server'
@@ -256,7 +272,7 @@ class QuotazioniController {
             // Questa è una versione semplificata, puoi espanderla
             const stats = {
                 total_quotazioni: 0,
-                per_fonte: {},
+                // per_fonte: {}, -- Removed: fonte column no longer exists
                 per_ruolo: {},
                 aggiornate_ultimo_mese: 0
             };

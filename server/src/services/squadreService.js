@@ -30,9 +30,9 @@ class SquadreService {
             a.prezzo as valore,
             a.data_acquisto,
             q.mia_valutazione,
-            q.unveil,
             q.gazzetta,
-            q.pazzidifanta,
+            q.fascia,
+            q.consiglio,
             q.note
           FROM acquisti a
           JOIN giocatori g ON a.giocatore_id = g.id
@@ -82,9 +82,9 @@ class SquadreService {
           a.prezzo as valore,
           a.data_acquisto,
           q.mia_valutazione,
-          q.unveil,
           q.gazzetta,
-          q.pazzidifanta,
+          q.fascia,
+          q.consiglio,
           q.note
         FROM acquisti a
         JOIN giocatori g ON a.giocatore_id = g.id

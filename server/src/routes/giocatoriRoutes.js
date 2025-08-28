@@ -42,6 +42,9 @@ router.get('/', giocatoriController.getAllGiocatori.bind(giocatoriController));
 // GET /api/giocatori/wishlist - Giocatori in wishlist
 router.get('/wishlist', giocatoriController.getGiocatoriInWishlist.bind(giocatoriController));
 
+// GET /api/giocatori/squadra/:squadra - Giocatori per squadra
+router.get('/squadra/:squadra', giocatoriController.getGiocatoriBySquadra.bind(giocatoriController));
+
 // PATCH /api/giocatori/:id/note - Aggiorna note
 router.patch('/:id/note', giocatoriController.updateNote.bind(giocatoriController));
 
@@ -50,6 +53,9 @@ router.patch('/:id/fantasquadra', giocatoriController.updateFantasquadra.bind(gi
 
 // PATCH /api/giocatori/:id/valutazione - Aggiorna valutazione
 router.patch('/:id/valutazione', giocatoriController.updateValutazione.bind(giocatoriController));
+
+// PATCH /api/giocatori/:id/fields - Aggiorna tutti i campi editabili
+router.patch('/:id/fields', giocatoriController.updateGiocatoreFields.bind(giocatoriController));
 
 // GET /api/giocatori/:ruolo - Giocatori per ruolo
 router.get('/:ruolo', giocatoriController.getGiocatoriByRuolo.bind(giocatoriController));

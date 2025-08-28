@@ -1,5 +1,5 @@
 -- Schema per il database Fantacalcio
--- Versione 3.1 - Schema normalizzato senza duplicazioni
+-- Versione 3.3 - Schema aggiornato con colonna voto e senza fonte
 
 -- Tabella giocatori (solo dati base)
 CREATE TABLE IF NOT EXISTS giocatori (
@@ -17,15 +17,13 @@ CREATE TABLE IF NOT EXISTS giocatori (
 CREATE TABLE IF NOT EXISTS quotazioni (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     giocatore_id TEXT NOT NULL,
-    fantacalciopedia TEXT,
-    pazzidifanta TEXT,
-    stadiosport TEXT,
-    unveil TEXT,
     gazzetta TEXT,
+    fascia TEXT,
+    consiglio TEXT,
+    voto INTEGER,
     mia_valutazione INTEGER,
     note TEXT,
     preferito BOOLEAN DEFAULT 0,
-    fonte TEXT DEFAULT 'manuale',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (giocatore_id) REFERENCES giocatori(id) ON DELETE CASCADE
@@ -68,7 +66,7 @@ CREATE INDEX IF NOT EXISTS idx_giocatori_squadra ON giocatori(squadra);
 CREATE INDEX IF NOT EXISTS idx_giocatori_ruolo ON giocatori(ruolo);
 CREATE INDEX IF NOT EXISTS idx_giocatori_status ON giocatori(status);
 CREATE INDEX IF NOT EXISTS idx_quotazioni_giocatore ON quotazioni(giocatore_id);
-CREATE INDEX IF NOT EXISTS idx_quotazioni_fonte ON quotazioni(fonte);
+-- CREATE INDEX IF NOT EXISTS idx_quotazioni_fonte ON quotazioni(fonte); -- Removed: fonte column no longer exists
 CREATE INDEX IF NOT EXISTS idx_wishlist_giocatore ON wishlist(giocatore_id);
 
 CREATE INDEX IF NOT EXISTS idx_acquisti_squadra ON acquisti(squadra_id);

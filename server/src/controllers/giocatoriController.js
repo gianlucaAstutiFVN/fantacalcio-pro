@@ -47,6 +47,29 @@ class GiocatoriController {
     }
   }
 
+  // GET /api/giocatori/squadra/:squadra - Giocatori per squadra
+  async getGiocatoriBySquadra(req, res) {
+    try {
+      const { squadra } = req.params;
+      const { withWishlist } = req.query;
+      const includeWishlist = withWishlist === 'true';
+      
+      const giocatori = await giocatoriService.getGiocatoriBySquadra(squadra, includeWishlist);
+      
+      res.json({
+        success: true,
+        squadra,
+        count: giocatori.length,
+        data: giocatori
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: 'Errore interno del server'
+      });
+    }
+  }
+
   // GET /api/giocatori/in-wishlist - Giocatori in wishlist
   async getGiocatoriInWishlist(req, res) {
     try {
@@ -196,6 +219,57 @@ class GiocatoriController {
         data: { id, valutazione }
       });
     } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: 'Errore interno del server'
+      });
+    }
+  }
+
+  // PATCH /api/giocatori/:id/fields - Aggiorna tutti i campi editabili
+  async updateGiocatoreFields(req, res) {
+    try {
+      const { id } = req.params;
+      const { mia_valutazione, note, consiglio, fascia } = req.body;
+      
+      // Verifica che almeno un campo sia presente
+      if (mia_valutazione === undefined && note === undefined && consiglio === undefined && fascia === undefined) {
+        return res.status(400).json({
+          success: false,
+          error: 'Almeno un campo deve essere specificato (mia_valutazione, note, consiglio, fascia)'
+        });
+      }
+      
+      // Validazione per la valutazione se presente
+      if (mia_valutazione !== undefined && mia_valutazione !== null && (isNaN(mia_valutazione) || mia_valutazione < 1 || mia_valutazione > 10)) {
+        return res.status(400).json({
+          success: false,
+          error: 'La valutazione deve essere un numero tra 1 e 10'
+        });
+      }
+      
+      const fields = {};
+      if (mia_valutazione !== undefined) fields.mia_valutazione = mia_valutazione;
+      if (note !== undefined) fields.note = note;
+      if (consiglio !== undefined) fields.consiglio = consiglio;
+      if (fascia !== undefined) fields.fascia = fascia;
+      
+      const success = await giocatoriService.updateGiocatoreFields(id, fields);
+      
+      if (!success) {
+        return res.status(404).json({
+          success: false,
+          error: 'Giocatore non trovato'
+        });
+      }
+      
+      res.json({
+        success: true,
+        message: 'Campi aggiornati con successo',
+        data: { id, fields }
+      });
+    } catch (error) {
+      console.error('Errore nell\'aggiornamento dei campi:', error);
       res.status(500).json({
         success: false,
         error: 'Errore interno del server'

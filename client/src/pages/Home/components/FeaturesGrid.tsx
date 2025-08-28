@@ -39,8 +39,8 @@ const FeaturesGrid: React.FC = () => {
       </Typography>
       
       <Grid container spacing={4} sx={{ mt: 4 }}>
-        {features.map((feature, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
+        {features.map((feature) => (
+          <Grid item xs={12} sm={6} md={4} key={feature.title}>
             <FeatureCard feature={feature} />
           </Grid>
         ))}

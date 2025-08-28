@@ -20,8 +20,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import {
   HomePage,
   GiocatoriPage,
-  SquadrePage,
-  StatistichePage
+  SquadrePage
 } from '../pages'
 import { FormazioniPage, DettaglioSquadraPage } from '../pages/Formazioni'
 import { DatabaseManagementPage } from '../pages/Admin'
@@ -177,7 +176,6 @@ const Layout: React.FC = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/giocatori" element={<GiocatoriPage />} />
           <Route path="/squadre" element={<SquadrePage />} />
-          <Route path="/statistiche" element={<StatistichePage />} />
           <Route path="/formazioni" element={<FormazioniPage />} />
           <Route path="/formazioni/:squadraId" element={<DettaglioSquadraPage />} />
           <Route path="/admin/database" element={<DatabaseManagementPage />} />

@@ -8,14 +8,51 @@ import {
   Alert,
   CircularProgress,
   Stack,
-  Chip
+  Chip,
+  Tabs,
+  Tab
 } from '@mui/material';
 import {
   Download as DownloadIcon,
   Upload as UploadIcon,
-  Storage as StorageIcon
+  Storage as StorageIcon,
+  TrendingUp as TrendingUpIcon
 } from '@mui/icons-material';
 import { config } from '../../config/config';
+import QuotazioniUpload from './components/QuotazioniUpload';
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`database-tabpanel-${index}`}
+      aria-labelledby={`database-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ py: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `database-tab-${index}`,
+    'aria-controls': `database-tabpanel-${index}`,
+  };
+}
 
 interface BackupStatus {
   lastBackup?: string;
@@ -28,6 +65,11 @@ const DatabaseManagementPage: React.FC = () => {
   const [message, setMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
   const [backupStatus, setBackupStatus] = useState<BackupStatus>({});
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [tabValue, setTabValue] = useState(0);
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
 
   // Scarica backup del database
   const downloadBackup = async () => {
@@ -136,8 +178,6 @@ const DatabaseManagementPage: React.FC = () => {
     }
   };
 
-
-
   // Controlla stato database
   const checkDatabaseStatus = async () => {
     try {
@@ -161,14 +201,14 @@ const DatabaseManagementPage: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
+    <Box sx={{ p: 3, maxWidth: 1200, mx: 'auto' }}>
       <Typography variant="h4" component="h1" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <StorageIcon color="primary" />
         Gestione Database
       </Typography>
       
       <Typography variant="body1" color="text.secondary" paragraph>
-        Gestisci backup e restore del database. I backup contengono tutti i dati inclusi giocatori, quotazioni, squadre e acquisti.
+        Gestisci backup, restore e quotazioni del database. I backup contengono tutti i dati inclusi giocatori, quotazioni, squadre e acquisti.
       </Typography>
 
       {/* Messaggi */}
@@ -178,114 +218,137 @@ const DatabaseManagementPage: React.FC = () => {
         </Alert>
       )}
 
-      {/* Stato Database */}
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Stato Database
-          </Typography>
-          <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ mt: 2 }}>
-            {backupStatus.tables?.map((table) => (
-              <Chip key={table} label={table} color="primary" variant="outlined" />
-            ))}
-          </Stack>
-          {backupStatus.lastBackup && (
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-              Ultimo backup: {new Date(backupStatus.lastBackup).toLocaleString('it-IT')}
-            </Typography>
-          )}
-        </CardContent>
-      </Card>
+      {/* Tab Navigation */}
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
+        <Tabs value={tabValue} onChange={handleTabChange} aria-label="database tabs">
+          <Tab 
+            label="Database" 
+            icon={<StorageIcon />} 
+            iconPosition="start"
+            {...a11yProps(0)} 
+          />
+          <Tab 
+            label="Quotazioni" 
+            icon={<TrendingUpIcon />} 
+            iconPosition="start"
+            {...a11yProps(1)} 
+          />
+        </Tabs>
+      </Box>
 
-      {/* Operazioni Database */}
-      <Stack spacing={3}>
-        {/* Download Backup */}
-        <Card>
+      {/* Tab Content */}
+      <TabPanel value={tabValue} index={0}>
+        {/* Stato Database */}
+        <Card sx={{ mb: 3 }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Scarica Backup
+              Stato Database
             </Typography>
-            <Typography variant="body2" color="text.secondary" paragraph>
-              Scarica un backup completo del database in formato CSV. Il file conterrà tutti i dati organizzati per tabelle.
-            </Typography>
-            <Button
-              variant="contained"
-              startIcon={<DownloadIcon />}
-              onClick={downloadBackup}
-              disabled={loading}
-              sx={{ minWidth: 200 }}
-            >
-              {loading ? <CircularProgress size={20} /> : 'Scarica Backup'}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Upload e Restore */}
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Ripristina da Backup
-            </Typography>
-            <Typography variant="body2" color="text.secondary" paragraph>
-              Carica un file di backup CSV per ripristinare il database. ATTENZIONE: questa operazione sovrascriverà tutti i dati esistenti.
-            </Typography>
-            
-            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-              <Button
-                variant="outlined"
-                component="label"
-                startIcon={<UploadIcon />}
-                disabled={loading}
-              >
-                Seleziona File CSV
-                <input
-                  type="file"
-                  hidden
-                  accept=".csv"
-                  onChange={handleFileSelect}
-                />
-              </Button>
-              
-              {selectedFile && (
-                <Typography variant="body2" color="primary">
-                  {selectedFile.name}
-                </Typography>
-              )}
+            <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ mt: 2 }}>
+              {backupStatus.tables?.map((table) => (
+                <Chip key={table} label={table} color="primary" variant="outlined" />
+              ))}
             </Stack>
-            
-            <Button
-              variant="contained"
-              color="warning"
-              onClick={restoreBackup}
-              disabled={!selectedFile || loading}
-              sx={{ minWidth: 200 }}
-            >
-              {loading ? <CircularProgress size={20} /> : 'Ripristina Database'}
-            </Button>
+            {backupStatus.lastBackup && (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                Ultimo backup: {new Date(backupStatus.lastBackup).toLocaleString('it-IT')}
+              </Typography>
+            )}
           </CardContent>
         </Card>
 
+        {/* Operazioni Database */}
+        <Stack spacing={3}>
+          {/* Download Backup */}
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Scarica Backup
+              </Typography>
+              <Typography variant="body2" color="text.secondary" paragraph>
+                Scarica un backup completo del database in formato CSV. Il file conterrà tutti i dati organizzati per tabelle.
+              </Typography>
+              <Button
+                variant="contained"
+                startIcon={<DownloadIcon />}
+                onClick={downloadBackup}
+                disabled={loading}
+                sx={{ minWidth: 200 }}
+              >
+                {loading ? <CircularProgress size={20} /> : 'Scarica Backup'}
+              </Button>
+            </CardContent>
+          </Card>
 
-      </Stack>
+          {/* Upload e Restore */}
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Ripristina da Backup
+              </Typography>
+              <Typography variant="body2" color="text.secondary" paragraph>
+                Carica un file di backup CSV per ripristinare il database. ATTENZIONE: questa operazione sovrascriverà tutti i dati esistenti.
+              </Typography>
+              
+              <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+                <Button
+                  variant="outlined"
+                  component="label"
+                  startIcon={<UploadIcon />}
+                  disabled={loading}
+                >
+                  Seleziona File CSV
+                  <input
+                    type="file"
+                    hidden
+                    accept=".csv"
+                    onChange={handleFileSelect}
+                  />
+                </Button>
+                
+                {selectedFile && (
+                  <Typography variant="body2" color="primary">
+                    {selectedFile.name}
+                  </Typography>
+                )}
+              </Stack>
+              
+              <Button
+                variant="contained"
+                color="warning"
+                onClick={restoreBackup}
+                disabled={!selectedFile || loading}
+                sx={{ minWidth: 200 }}
+              >
+                {loading ? <CircularProgress size={20} /> : 'Ripristina Database'}
+              </Button>
+            </CardContent>
+          </Card>
+        </Stack>
 
-      {/* Informazioni */}
-      <Card sx={{ mt: 3, bgcolor: 'grey.50' }}>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            ℹ️ Informazioni
-          </Typography>
-          <Typography variant="body2" color="text.secondary" paragraph>
-            • I backup contengono tutti i dati del database organizzati per tabelle
-          </Typography>
-          <Typography variant="body2" color="text.secondary" paragraph>
-            • Il restore sovrascrive completamente il database esistente
-          </Typography>
+        {/* Informazioni */}
+        <Card sx={{ mt: 3, bgcolor: 'grey.50' }}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              ℹ️ Informazioni
+            </Typography>
+            <Typography variant="body2" color="text.secondary" paragraph>
+              • I backup contengono tutti i dati del database organizzati per tabelle
+            </Typography>
+            <Typography variant="body2" color="text.secondary" paragraph>
+              • Il restore sovrascrive completamente il database esistente
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              • Su Render, il database si resetta ad ogni deployment
+            </Typography>
+          </CardContent>
+        </Card>
+      </TabPanel>
 
-          <Typography variant="body2" color="text.secondary">
-            • Su Render, il database si resetta ad ogni deployment
-          </Typography>
-        </CardContent>
-      </Card>
+      {/* Tab Quotazioni */}
+      <TabPanel value={tabValue} index={1}>
+        <QuotazioniUpload />
+      </TabPanel>
     </Box>
   );
 };

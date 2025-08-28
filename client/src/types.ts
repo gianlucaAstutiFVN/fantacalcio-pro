@@ -4,11 +4,9 @@ export interface Giocatore {
   squadra: string,
   squadra_giocatore?: string,
   ruolo: 'portiere' | 'difensore' | 'centrocampista' | 'attaccante'
-  fantacalciopedia?: number | null
-  pazzidifanta?: number | null
-  stadiosport?: number | null
-  unveil?: number | null
   gazzetta?: number | null
+  fascia?: string | null
+  consiglio?: string | null
   mia_valutazione?: number | null
   note?: string | null
   preferito?: number
@@ -22,8 +20,6 @@ export interface Giocatore {
   // Proprietà aggiuntive per compatibilità
   quotazione?: number
   valore?: number
-  unveil_fvm?: number
-  gazzetta_fascia?: string
 }
 
 export interface Squadra {

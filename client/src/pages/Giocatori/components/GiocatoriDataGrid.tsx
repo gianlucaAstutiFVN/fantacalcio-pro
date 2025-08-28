@@ -5,8 +5,7 @@ import { useGiocatoriDataGrid } from './useGiocatoriDataGrid'
 import GiocatoriGrid from './GiocatoriGrid'
 import AcquistaDialog from './ActionDataGrid/AcquistaDialog'
 import SvincolaDialog from './ActionDataGrid/SvincolaDialog'
-import EditNoteDialog from './ActionDataGrid/EditNoteDialog'
-import EditValutazioneDialog from './ActionDataGrid/EditValutazioneDialog'
+import EditGiocatoreFieldsDialog from './ActionDataGrid/EditGiocatoreFieldsDialog'
 
 interface GiocatoriDataGridProps {
   giocatori: Giocatore[]
@@ -29,25 +28,20 @@ const GiocatoriDataGrid: React.FC<GiocatoriDataGridProps> = ({
     openAcquistaDialog,
     openSvincolaDialog,
     giocatoreDaSvincolare,
-    openEditNoteDialog,
-    giocatorePerNote,
-    openEditValutazioneDialog,
-    giocatorePerValutazione,
+    openEditFieldsDialog,
+    giocatorePerEdit,
     setPaginationModel,
     setSortingModel,
     setOpenAcquistaDialog,
     setOpenSvincolaDialog,
-    setOpenEditNoteDialog,
-    setOpenEditValutazioneDialog,
+    setOpenEditFieldsDialog,
     getRowClassName,
     handleAssegnaGiocatore,
     handleAcquistaGiocatore,
     handleSvincolaGiocatore,
     handleSvincolaConfirm,
-    handleEditNote,
-    handleNoteUpdated,
-    handleEditValutazione,
-    handleValutazioneUpdated,
+    handleEditAllFields,
+    handleFieldsUpdated,
     handleWishlistToggle,
     onRefresh: onRefreshFromHook,
   } = useGiocatoriDataGrid({ onRefresh, onGiocatoreUpdated })
@@ -58,8 +52,7 @@ const GiocatoriDataGrid: React.FC<GiocatoriDataGridProps> = ({
     onRefresh: onRefreshFromHook,
     onAssegnaGiocatore: handleAssegnaGiocatore,
     onSvincolaGiocatore: handleSvincolaGiocatore,
-    onEditNote: handleEditNote,
-    onEditValutazione: handleEditValutazione,
+    onEditAllFields: handleEditAllFields,
   })
 
   return (
@@ -89,18 +82,11 @@ const GiocatoriDataGrid: React.FC<GiocatoriDataGridProps> = ({
         onSvincola={handleSvincolaConfirm}
       />
 
-      <EditNoteDialog
-        open={openEditNoteDialog}
-        onClose={() => setOpenEditNoteDialog(false)}
-        giocatore={giocatorePerNote}
-        onNoteUpdated={handleNoteUpdated}
-      />
-
-      <EditValutazioneDialog
-        open={openEditValutazioneDialog}
-        onClose={() => setOpenEditValutazioneDialog(false)}
-        giocatore={giocatorePerValutazione}
-        onValutazioneUpdated={handleValutazioneUpdated}
+      <EditGiocatoreFieldsDialog
+        open={openEditFieldsDialog}
+        onClose={() => setOpenEditFieldsDialog(false)}
+        giocatore={giocatorePerEdit}
+        onFieldsUpdated={handleFieldsUpdated}
       />
     </>
   )

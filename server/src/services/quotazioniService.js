@@ -12,15 +12,13 @@ class QuotazioniService {
                 SELECT 
                     q.id,
                     q.giocatore_id,
-                    q.fantacalciopedia,
-                    q.pazzidifanta,
-                    q.stadiosport,
-                    q.unveil,
                     q.gazzetta,
+                    q.fascia,
+                    q.consiglio,
+                    q.voto,
                     q.mia_valutazione,
                     q.note,
                     q.preferito,
-                    q.fonte,
                     q.created_at,
                     q.updated_at,
                     g.nome,
@@ -73,15 +71,13 @@ class QuotazioniService {
         try {
             const {
                 giocatore_id,
-                fantacalciopedia,
-                pazzidifanta,
-                stadiosport,
-                unveil,
                 gazzetta,
+                fascia,
+                consiglio,
+                voto,
                 mia_valutazione,
                 note,
-                preferito,
-                fonte = 'manuale'
+                preferito
             } = quotazioneData;
 
             // Verifica che il giocatore esista
@@ -92,14 +88,12 @@ class QuotazioniService {
 
             const query = `
                 INSERT INTO quotazioni (
-                    giocatore_id, fantacalciopedia, pazzidifanta, stadiosport,
-                    unveil, gazzetta, mia_valutazione, note, preferito, fonte
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    giocatore_id, gazzetta, fascia, consiglio, voto, mia_valutazione, note, preferito
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `;
             
             const result = await this.db.run(query, [
-                giocatore_id, fantacalciopedia, pazzidifanta, stadiosport,
-                unveil, gazzetta, mia_valutazione, note, preferito, fonte
+                giocatore_id, gazzetta, fascia, consiglio, voto, mia_valutazione, note, preferito
             ]);
 
             return {
@@ -108,15 +102,13 @@ class QuotazioniService {
                 data: {
                     id: result.lastID,
                     giocatore_id,
-                    fantacalciopedia,
-                    pazzidifanta,
-                    stadiosport,
-                    unveil,
                     gazzetta,
+                    fascia,
+                    consiglio,
+                    voto,
                     mia_valutazione,
                     note,
-                    preferito,
-                    fonte
+                    preferito
                 }
             };
         } catch (error) {
@@ -128,15 +120,13 @@ class QuotazioniService {
     async updateQuotazione(id, quotazioneData) {
         try {
             const {
-                fantacalciopedia,
-                pazzidifanta,
-                stadiosport,
-                unveil,
                 gazzetta,
+                fascia,
+                consiglio,
+                voto,
                 mia_valutazione,
                 note,
-                preferito,
-                fonte
+                preferito
             } = quotazioneData;
 
             // Verifica che la quotazione esista
@@ -147,22 +137,19 @@ class QuotazioniService {
 
             const query = `
                 UPDATE quotazioni SET
-                    fantacalciopedia = COALESCE(?, fantacalciopedia),
-                    pazzidifanta = COALESCE(?, pazzidifanta),
-                    stadiosport = COALESCE(?, stadiosport),
-                    unveil = COALESCE(?, unveil),
                     gazzetta = COALESCE(?, gazzetta),
+                    fascia = COALESCE(?, fascia),
+                    consiglio = COALESCE(?, consiglio),
+                    voto = COALESCE(?, voto),
                     mia_valutazione = COALESCE(?, mia_valutazione),
                     note = COALESCE(?, note),
                     preferito = COALESCE(?, preferito),
-                    fonte = COALESCE(?, fonte),
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = ?
             `;
             
             await this.db.run(query, [
-                fantacalciopedia, pazzidifanta, stadiosport, unveil,
-                gazzetta, mia_valutazione, note, preferito, fonte, id
+                gazzetta, fascia, consiglio, voto, mia_valutazione, note, preferito, id
             ]);
 
             return {
@@ -234,19 +221,32 @@ class QuotazioniService {
                         return existingValue;
                     };
 
+                    // Mapping per supportare sia "Gazzetta" che "FVM" dal CSV
+                    // Se il CSV ha "FVM", lo mappa alla colonna "gazzetta" del database
+                    let gazzettaValue = null;
+                    if (row.FVM !== null && row.FVM !== undefined && row.FVM !== '') {
+                        gazzettaValue = row.FVM;
+                        console.log(`🔄 Mapping FVM -> fantagazzetta per ${row.Nome}: ${row.FVM}`);
+                    } else if (row.Gazzetta !== null && row.Gazzetta !== undefined && row.Gazzetta !== '') {
+                        gazzettaValue = row.Gazzetta;
+                        console.log(`🔄 Usando colonna Gazzetta per ${row.Nome}: ${row.Gazzetta}`);
+                    } else if (row.Fantagazzetta !== null && row.Fantagazzetta !== undefined && row.Fantagazzetta !== '') {
+                        gazzettaValue = row.Fantagazzetta;
+                        console.log(`🔄 Usando colonna Fantagazzetta per ${row.Nome}: ${row.Fantagazzetta}`);
+                    }
+
                     // Prepara i dati per l'aggiornamento, preservando i valori esistenti
                     const quotazioneData = {
                         giocatore_id: giocatore.id,
-                        fantacalciopedia: preserveExistingValue(row.Fantacalciopedia, existingQuotazione?.fantacalciopedia),
-                        pazzidifanta: preserveExistingValue(row.PazzidiFanta, existingQuotazione?.pazzidifanta),
-                        stadiosport: preserveExistingValue(row.Stadiosport, existingQuotazione?.stadiosport),
-                        unveil: preserveExistingValue(row.Unveil, existingQuotazione?.unveil),
-                        gazzetta: preserveExistingValue(row.Gazzetta, existingQuotazione?.gazzetta),
+                        gazzetta: preserveExistingValue(gazzettaValue, existingQuotazione?.gazzetta),
+                        fascia: preserveExistingValue(row.Fascia, existingQuotazione?.fascia),
+                        consiglio: preserveExistingValue(row.Consiglio, existingQuotazione?.consiglio),
+                        voto: row.Voto && row.Voto !== '' ? parseInt(row.Voto) : existingQuotazione?.voto,
                         mia_valutazione: row.Mia_Valutazione && row.Mia_Valutazione !== '' ? 
                             parseInt(row.Mia_Valutazione) : existingQuotazione?.mia_valutazione,
                         note: preserveExistingValue(row.Note, existingQuotazione?.note),
-                        preferito: row.Preferito === 'true' || row.Preferito === '1' ? 1 : 0,
-                        fonte: 'csv_import'
+                        preferito: row.Preferito === 'true' || row.Preferito === '1' ? 1 : 0
+                        // fonte: 'csv_import' -- Removed: fonte column no longer exists
                     };
 
                     if (existingQuotazione) {
@@ -261,15 +261,14 @@ class QuotazioniService {
                         // Crea nuova quotazione (per nuove quotazioni, usa i valori del CSV o null)
                         const newQuotazioneData = {
                             giocatore_id: giocatore.id,
-                            fantacalciopedia: row.Fantacalciopedia || null,
-                            pazzidifanta: row.PazzidiFanta || null,
-                            stadiosport: row.Stadiosport || null,
-                            unveil: row.Unveil || null,
-                            gazzetta: row.Gazzetta || null,
+                            gazzetta: gazzettaValue || null,
+                            fascia: row.Fascia || null,
+                            consiglio: row.Consiglio || null,
+                            voto: row.Voto ? parseInt(row.Voto) : null,
                             mia_valutazione: row.Mia_Valutazione ? parseInt(row.Mia_Valutazione) : null,
                             note: row.Note || null,
-                            preferito: row.Preferito === 'true' || row.Preferito === '1' ? 1 : 0,
-                            fonte: 'csv_import'
+                            preferito: row.Preferito === 'true' || row.Preferito === '1' ? 1 : 0
+                            // fonte: 'csv_import' -- Removed: fonte column no longer exists
                         };
                         
                         const result = await this.createQuotazione(newQuotazioneData);
@@ -338,15 +337,13 @@ class QuotazioniService {
                 SELECT 
                     q.id,
                     q.giocatore_id,
-                    q.fantacalciopedia,
-                    q.pazzidifanta,
-                    q.stadiosport,
-                    q.unveil,
                     q.gazzetta,
+                    q.fascia,
+                    q.consiglio,
                     q.mia_valutazione,
                     q.note,
                     q.preferito,
-                    q.fonte,
+                    -- q.fonte, -- Removed: fonte column no longer exists
                     q.created_at,
                     q.updated_at,
                     g.nome,
@@ -369,10 +366,10 @@ class QuotazioniService {
                 params.push(filters.squadra);
             }
 
-            if (filters.fonte) {
-                query += ' AND q.fonte = ?';
-                params.push(filters.fonte);
-            }
+            // if (filters.fonte) { -- Removed: fonte column no longer exists
+            //     query += ' AND q.fonte = ?';
+            //     params.push(filters.fonte);
+            // }
 
             if (filters.preferito !== undefined) {
                 query += ' AND q.preferito = ?';

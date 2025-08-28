@@ -1,0 +1,1 @@
+export { useSquadraDetail } from './useSquadraDetail';

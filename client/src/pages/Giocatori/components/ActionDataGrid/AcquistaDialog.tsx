@@ -138,9 +138,14 @@ const AcquistaDialog: React.FC<AcquistaDialogProps> = ({
                 <Typography variant="body2" color="text.secondary">
                   Squadra Attuale: {giocatore.squadra}
                 </Typography>
-                {giocatore.unveil_fvm && (
+                {giocatore.fascia && (
                   <Typography variant="body2" color="primary">
-                    Unveil FVM: {giocatore.unveil_fvm}
+                    Fascia: {giocatore.fascia}
+                  </Typography>
+                )}
+                {giocatore.consiglio && (
+                  <Typography variant="body2" color="secondary">
+                    Consiglio: {giocatore.consiglio}
                   </Typography>
                 )}
               </Box>

@@ -45,10 +45,8 @@ export const useGiocatoriDataGrid = ({ onRefresh, onGiocatoreUpdated }: UseGioca
   const [openAcquistaDialog, setOpenAcquistaDialog] = useState(false)
   const [openSvincolaDialog, setOpenSvincolaDialog] = useState(false)
   const [giocatoreDaSvincolare, setGiocatoreDaSvincolare] = useState<Giocatore | null>(null)
-  const [openEditNoteDialog, setOpenEditNoteDialog] = useState(false)
-  const [giocatorePerNote, setGiocatorePerNote] = useState<Giocatore | null>(null)
-  const [openEditValutazioneDialog, setOpenEditValutazioneDialog] = useState(false)
-  const [giocatorePerValutazione, setGiocatorePerValutazione] = useState<Giocatore | null>(null)
+  const [openEditFieldsDialog, setOpenEditFieldsDialog] = useState(false)
+  const [giocatorePerEdit, setGiocatorePerEdit] = useState<Giocatore | null>(null)
 
   // Determina se un giocatore è stato acquistato
   const isGiocatoreAcquistato = (giocatore: Giocatore) => {
@@ -165,34 +163,19 @@ export const useGiocatoriDataGrid = ({ onRefresh, onGiocatoreUpdated }: UseGioca
     }
   }
 
-  const handleEditNote = (giocatore: Giocatore) => {
-    setGiocatorePerNote(giocatore)
-    setOpenEditNoteDialog(true)
+  const handleEditAllFields = (giocatore: Giocatore) => {
+    setGiocatorePerEdit(giocatore)
+    setOpenEditFieldsDialog(true)
   }
 
-  const handleNoteUpdated = (giocatore: Giocatore) => {
+  const handleFieldsUpdated = (giocatore: Giocatore) => {
     // Aggiornamento ottimistico
     if (onGiocatoreUpdated) {
       onGiocatoreUpdated(giocatore)
     }
-    setOpenEditNoteDialog(false)
-    setGiocatorePerNote(null)
+    setOpenEditFieldsDialog(false)
+    setGiocatorePerEdit(null)
   }
-
-  const handleEditValutazione = (giocatore: Giocatore) => {
-    setGiocatorePerValutazione(giocatore)
-    setOpenEditValutazioneDialog(true)
-  }
-
-  const handleValutazioneUpdated = (giocatore: Giocatore) => {
-    // Aggiornamento ottimistico
-    if (onGiocatoreUpdated) {
-      onGiocatoreUpdated(giocatore)
-    }
-    setOpenEditValutazioneDialog(false)
-    setGiocatorePerValutazione(null)
-  }
-
 
 
   // Aggiorna paginazione e salva in URL
@@ -255,18 +238,15 @@ export const useGiocatoriDataGrid = ({ onRefresh, onGiocatoreUpdated }: UseGioca
     openAcquistaDialog,
     openSvincolaDialog,
     giocatoreDaSvincolare,
-    openEditNoteDialog,
-    giocatorePerNote,
-    openEditValutazioneDialog,
-    giocatorePerValutazione,
+    openEditFieldsDialog,
+    giocatorePerEdit,
     
     // Funzioni
     setPaginationModel: handlePaginationModelChange,
     setSortingModel: handleSortingModelChange,
     setOpenAcquistaDialog,
     setOpenSvincolaDialog,
-    setOpenEditNoteDialog,
-    setOpenEditValutazioneDialog,
+    setOpenEditFieldsDialog,
     
     // Logica
     isGiocatoreAcquistato,
@@ -276,10 +256,8 @@ export const useGiocatoriDataGrid = ({ onRefresh, onGiocatoreUpdated }: UseGioca
     handleAcquistaGiocatore,
     handleSvincolaGiocatore,
     handleSvincolaConfirm,
-    handleEditNote,
-    handleNoteUpdated,
-    handleEditValutazione,
-    handleValutazioneUpdated,
+    handleEditAllFields,
+    handleFieldsUpdated,
     handleWishlistToggle,
     
     // Callback per refresh

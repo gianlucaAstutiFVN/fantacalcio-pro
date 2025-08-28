@@ -12,8 +12,7 @@ class GiocatoriService {
       
       let query = `
         SELECT g.id, g.nome, g.squadra, g.ruolo, g.fantasquadra, g.status,
-               q.fantacalciopedia, q.pazzidifanta, q.stadiosport, q.unveil, 
-               q.gazzetta, q.mia_valutazione, q.note, q.preferito,
+               q.gazzetta, q.fascia, q.consiglio, q.mia_valutazione, q.note, q.preferito,
                a.prezzo as prezzo_acquisto,
                s.nome as nome_squadra_acquirente
         FROM giocatori g
@@ -46,8 +45,7 @@ class GiocatoriService {
       
       let query = `
         SELECT g.id, g.nome, g.squadra, g.ruolo, g.fantasquadra, g.status,
-               q.fantacalciopedia, q.pazzidifanta, q.stadiosport, q.unveil, 
-               q.gazzetta, q.mia_valutazione, q.note, q.preferito,
+               q.gazzetta, q.fascia, q.consiglio, q.mia_valutazione, q.note, q.preferito,
                a.prezzo as prezzo_acquisto,
                s.nome as nome_squadra_acquirente
         FROM giocatori g
@@ -74,6 +72,40 @@ class GiocatoriService {
     }
   }
 
+  // Ottiene giocatori per squadra
+  async getGiocatoriBySquadra(squadra, includeWishlist = false) {
+    try {
+      await this.db.connect();
+      
+      let query = `
+        SELECT g.id, g.nome, g.squadra, g.ruolo, g.fantasquadra, g.status,
+               q.gazzetta, q.fascia, q.consiglio, q.mia_valutazione, q.note, q.preferito,
+               a.prezzo as prezzo_acquisto,
+               s.nome as nome_squadra_acquirente
+        FROM giocatori g
+        LEFT JOIN quotazioni q ON g.id = q.giocatore_id
+        LEFT JOIN acquisti a ON g.id = a.giocatore_id
+        LEFT JOIN squadre s ON a.squadra_id = s.id
+        WHERE LOWER(g.squadra) = LOWER(?)
+        ORDER BY g.ruolo, g.nome
+      `;
+      
+      const giocatori = await this.db.all(query, [squadra]);
+      
+      if (includeWishlist) {
+        for (const giocatore of giocatori) {
+          const inWishlist = await this.isInWishlist(giocatore.id);
+          giocatore.inWishlist = inWishlist;
+          giocatore.wishlistIcon = inWishlist ? '❤️' : '🤍';
+        }
+      }
+      
+      return giocatori;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Ottiene giocatori in wishlist
   async getGiocatoriInWishlist() {
     try {
@@ -81,8 +113,7 @@ class GiocatoriService {
       
       const query = `
         SELECT g.id, g.nome, g.squadra, g.ruolo, g.fantasquadra, g.status,
-               q.fantacalciopedia, q.pazzidifanta, q.stadiosport, q.unveil, 
-               q.gazzetta, q.mia_valutazione, q.note, q.preferito,
+               q.gazzetta, q.fascia, q.consiglio, q.mia_valutazione, q.note, q.preferito,
                a.prezzo as prezzo_acquisto,
                s.nome as nome_squadra_acquirente
         FROM giocatori g
@@ -106,8 +137,7 @@ class GiocatoriService {
       
       const query = `
         SELECT g.id, g.nome, g.squadra, g.ruolo, g.fantasquadra, g.status,
-               q.fantacalciopedia, q.pazzidifanta, q.stadiosport, q.unveil, 
-               q.gazzetta, q.mia_valutazione, q.note, q.preferito,
+               q.gazzetta, q.fascia, q.consiglio, q.mia_valutazione, q.note, q.preferito,
                a.prezzo as prezzo_acquisto,
                s.nome as nome_squadra_acquirente
         FROM giocatori g
@@ -147,8 +177,8 @@ class GiocatoriService {
       } else {
         // Crea una nuova riga nella tabella quotazioni
         const query = `
-          INSERT INTO quotazioni (giocatore_id, note, fonte)
-          VALUES (?, ?, 'manuale')
+          INSERT INTO quotazioni (giocatore_id, note)
+          VALUES (?, ?)
         `;
         
         const result = await this.db.run(query, [id, note]);
@@ -203,6 +233,105 @@ class GiocatoriService {
           'INSERT INTO quotazioni (giocatore_id, mia_valutazione, created_at, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)', 
           [valutazione, id]
         );
+      }
+      
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Aggiorna tutti i campi editabili di un giocatore (valutazione, note, consiglio, fascia)
+  async updateGiocatoreFields(id, fields) {
+    try {
+      await this.db.connect();
+      
+      // Verifica che il giocatore esista
+      const giocatore = await this.db.get('SELECT id FROM giocatori WHERE id = ?', [id]);
+      if (!giocatore) {
+        return false;
+      }
+
+      // Verifica se esiste già una quotazione per questo giocatore
+      let quotazione = await this.db.get('SELECT id FROM quotazioni WHERE giocatore_id = ?', [id]);
+      
+      if (quotazione) {
+        // Aggiorna la quotazione esistente
+        const updateFields = [];
+        const updateValues = [];
+        
+        if (fields.mia_valutazione !== undefined) {
+          updateFields.push('mia_valutazione = ?');
+          updateValues.push(fields.mia_valutazione);
+        }
+        
+        if (fields.note !== undefined) {
+          updateFields.push('note = ?');
+          updateValues.push(fields.note);
+        }
+        
+        if (fields.consiglio !== undefined) {
+          updateFields.push('consiglio = ?');
+          updateValues.push(fields.consiglio);
+        }
+        
+        if (fields.fascia !== undefined) {
+          updateFields.push('fascia = ?');
+          updateValues.push(fields.fascia);
+        }
+        
+        if (updateFields.length > 0) {
+          updateFields.push('updated_at = CURRENT_TIMESTAMP');
+          updateValues.push(id);
+          
+          const query = `
+            UPDATE quotazioni 
+            SET ${updateFields.join(', ')}
+            WHERE giocatore_id = ?
+          `;
+          
+          await this.db.run(query, updateValues);
+        }
+      } else {
+        // Crea una nuova quotazione
+        const insertFields = ['giocatore_id'];
+        const insertValues = [id];
+        const placeholders = ['?'];
+        
+        if (fields.mia_valutazione !== undefined) {
+          insertFields.push('mia_valutazione');
+          insertValues.push(fields.mia_valutazione);
+          placeholders.push('?');
+        }
+        
+        if (fields.note !== undefined) {
+          insertFields.push('note');
+          insertValues.push(fields.note);
+          placeholders.push('?');
+        }
+        
+        if (fields.consiglio !== undefined) {
+          insertFields.push('consiglio');
+          insertValues.push(fields.consiglio);
+          placeholders.push('?');
+        }
+        
+        if (fields.fascia !== undefined) {
+          insertFields.push('fascia');
+          insertValues.push(fields.fascia);
+          placeholders.push('?');
+        }
+        
+        insertFields.push('created_at', 'updated_at');
+        insertValues.push('CURRENT_TIMESTAMP', 'CURRENT_TIMESTAMP');
+        placeholders.push('CURRENT_TIMESTAMP', 'CURRENT_TIMESTAMP');
+        
+        const query = `
+          INSERT INTO quotazioni (${insertFields.join(', ')})
+          VALUES (${placeholders.join(', ')})
+        `;
+        
+        await this.db.run(query, insertValues);
       }
       
       return true;

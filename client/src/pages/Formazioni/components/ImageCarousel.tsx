@@ -126,9 +126,9 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
             mt: 2
           }}
         >
-          {images.map((_, index) => (
+          {images.map((image, index) => (
             <Box
-              key={index}
+              key={`image-${index}-${image}`}
               onClick={() => setCurrentIndex(index)}
               sx={{
                 width: 12,

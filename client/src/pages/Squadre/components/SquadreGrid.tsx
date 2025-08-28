@@ -96,14 +96,14 @@ const SquadreGrid: React.FC<SquadreGridProps> = ({
       {/* Griglia squadre */}
       <Grid container spacing={3}>
         {squadre.map((squadra) => (
-          <Grid item xs={12} md={6} lg={4} key={squadra.id}>
-                         <SquadraCard
-               squadra={squadra}
-               onEdit={onEdit}
-               onDelete={onDelete}
-               onAssegnaGiocatore={() => onAssegnaGiocatore(squadra)}
-               onViewDetails={onViewDetails}
-             />
+          <Grid key={squadra.id} item xs={12} md={6} lg={4}>
+            <SquadraCard
+              squadra={squadra}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onAssegnaGiocatore={() => onAssegnaGiocatore(squadra)}
+              onViewDetails={onViewDetails}
+            />
           </Grid>
         ))}
       </Grid>

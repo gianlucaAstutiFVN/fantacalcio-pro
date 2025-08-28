@@ -10,6 +10,9 @@ import {
   Grid,
   Chip,
   OutlinedInput,
+  useTheme,
+  useMediaQuery,
+  Stack,
 } from '@mui/material'
 import {  Filters } from '../../../types'
 
@@ -24,6 +27,9 @@ const GiocatoriFilters: React.FC<GiocatoriFiltersProps> = ({
   onFiltersChange,
   isLoading = false,
 }) => {
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  
   // Local state for filters before applying
   const [localFilters, setLocalFilters] = useState({
     searchTerm: filters.searchTerm,
@@ -91,7 +97,8 @@ const GiocatoriFilters: React.FC<GiocatoriFiltersProps> = ({
 
   return (
     <Box sx={{ mb: 3 }}>
-      <Grid container spacing={2} alignItems="center">
+      <Grid container spacing={isMobile ? 2 : 2} alignItems="flex-start">
+        {/* Search field - full width on mobile */}
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
@@ -100,10 +107,13 @@ const GiocatoriFilters: React.FC<GiocatoriFiltersProps> = ({
             onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Inserisci nome giocatore..."
             disabled={isLoading}
+            size={isMobile ? 'small' : 'medium'}
           />
         </Grid>
+        
+        {/* Squadre filter - full width on mobile */}
         <Grid item xs={12} md={3}>
-          <FormControl fullWidth>
+          <FormControl fullWidth size={isMobile ? 'small' : 'medium'}>
             <InputLabel>Squadre</InputLabel>
             <Select
               multiple
@@ -127,8 +137,10 @@ const GiocatoriFilters: React.FC<GiocatoriFiltersProps> = ({
             </Select>
           </FormControl>
         </Grid>
+        
+        {/* Status filter - full width on mobile */}
         <Grid item xs={12} md={3}>
-          <FormControl fullWidth>
+          <FormControl fullWidth size={isMobile ? 'small' : 'medium'}>
             <InputLabel>Filtri</InputLabel>
             <Select
               multiple
@@ -152,25 +164,35 @@ const GiocatoriFilters: React.FC<GiocatoriFiltersProps> = ({
             </Select>
           </FormControl>
         </Grid>
+        
+        {/* Buttons - full width on mobile, side by side on desktop */}
         <Grid item xs={12} md={3}>
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Stack 
+            direction={isMobile ? 'column' : 'row'} 
+            spacing={isMobile ? 1 : 1}
+            sx={{ width: '100%' }}
+          >
             <Button
               variant="contained"
               onClick={handleApplyFilters}
-              size="small"
+              size={isMobile ? 'medium' : 'small'}
               disabled={isLoading}
+              fullWidth={isMobile}
+              sx={{ minWidth: isMobile ? '100%' : 'auto' }}
             >
               Applica Filtri
             </Button>
             <Button
               variant="outlined"
               onClick={handleReset}
-              size="small"
+              size={isMobile ? 'medium' : 'small'}
               disabled={isLoading}
+              fullWidth={isMobile}
+              sx={{ minWidth: isMobile ? '100%' : 'auto' }}
             >
               Reset
             </Button>
-          </Box>
+          </Stack>
         </Grid>
       </Grid>
     </Box>

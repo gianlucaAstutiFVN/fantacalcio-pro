@@ -12,9 +12,10 @@ const CSV_HEADERS = {
     { id: 'valore', title: 'Valore' },
     { id: 'squadraAcquirente', title: 'Squadra Acquirente' },
     { id: 'data', title: 'Data Acquisto' },
-    { id: 'unveil_fvm', title: 'Unveil FVM (0-100)' },
-    { id: 'gazzetta_fascia', title: 'Gazzetta Fascia (1-4)' },
-    { id: 'pazzidifanta', title: 'PazzidiFanta (Qualitativo)' },
+    { id: 'gazzetta', title: 'Gazzetta' },
+    { id: 'fascia', title: 'Fascia' },
+    { id: 'consiglio', title: 'Consiglio' },
+    { id: 'voto', title: 'Voto' },
     { id: 'mia_valutazione', title: 'Mia_Valutazione (0-100)' },
     { id: 'note', title: 'Ruolo_note' }
   ]

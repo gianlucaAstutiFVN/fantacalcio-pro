@@ -182,11 +182,10 @@ const AssegnaGiocatoreDialog: React.FC<AssegnaGiocatoreDialogProps> = ({
                 >
                   {squadre.map((squadra) => (
                     <MenuItem key={squadra.id} value={squadra.id}>
-                      <Typography  variant="body1">
+                      <Typography key="nome" variant="body1">
                         {squadra.nome} - {squadra.proprietario}
                       </Typography>
-                      <Typography marginLeft={1}
-                       variant="caption" color="success.main">
+                      <Typography key="budget" marginLeft={1} variant="caption" color="success.main">
                         Budget: €{squadra.budget}
                       </Typography>
                     </MenuItem>

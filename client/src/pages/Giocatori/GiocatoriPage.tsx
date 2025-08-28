@@ -248,11 +248,11 @@ const GiocatoriPage: React.FC = () => {
 
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
+      <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: '1.5rem', md: '2.125rem' } }}>
         Gestione Giocatori
         {currentRole !== 'tutti' && (
-          <Typography component="span" variant="h6" color="text.secondary" sx={{ ml: 2 }}>
+          <Typography component="span" variant="h6" color="text.secondary" sx={{ ml: { xs: 1, md: 2 } }}>
             - {currentRole.charAt(0).toUpperCase() + currentRole.slice(1)}
           </Typography>
         )}

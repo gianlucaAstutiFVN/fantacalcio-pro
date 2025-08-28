@@ -26,6 +26,12 @@ export const giocatoriAPI = {
     return response.data
   },
 
+  // Get giocatori by squadra
+  getBySquadra: async (squadra: string, withWishlist: boolean = false): Promise<ApiResponse<Giocatore[]>> => {
+    const response = await api.get(`/giocatori/squadra/${squadra}?withWishlist=${withWishlist}`)
+    return response.data
+  },
+
   // Get giocatori in wishlist
   getInWishlist: async (): Promise<ApiResponse<Giocatore[]>> => {
     const response = await api.get('/giocatori/wishlist')
@@ -53,6 +59,17 @@ export const giocatoriAPI = {
   // Update giocatore valutazione
   updateValutazione: async (id: string, valutazione: number | null): Promise<ApiResponse<Giocatore>> => {
     const response = await api.patch(`/giocatori/${id}/valutazione`, { valutazione })
+    return response.data
+  },
+
+  // Update all editable fields of a giocatore (valutazione, note, consiglio, fascia)
+  updateFields: async (id: string, fields: {
+    mia_valutazione?: number | null;
+    note?: string | null;
+    consiglio?: string | null;
+    fascia?: string | null;
+  }): Promise<ApiResponse<Giocatore>> => {
+    const response = await api.patch(`/giocatori/${id}/fields`, fields)
     return response.data
   },
 }

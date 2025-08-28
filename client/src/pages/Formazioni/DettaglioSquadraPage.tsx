@@ -5,23 +5,50 @@ import {
   Box,
   Avatar,
   IconButton,
-  Paper
+  CircularProgress,
+  Alert
 } from '@mui/material';
 import { 
   ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { squadreSerieA } from './data/squadreData';
-import { formazioniSquadre } from './data/formazioniData';
+import { useSquadraDetail } from './hooks/useSquadraDetail';
 import ImageCarousel from './components/ImageCarousel';
 import FormazioneList from './components/FormazioneList';
 
 const DettaglioSquadraPage: React.FC = () => {
   const { squadraId } = useParams<{ squadraId: string }>();
   const navigate = useNavigate();
+  const { formazione, loading, error, refreshFormazione } = useSquadraDetail(squadraId);
   
   const squadra = squadreSerieA.find(s => s.id === squadraId);
-  const formazione = formazioniSquadre[squadraId || ''];
+
+  const handleGoBack = () => {
+    // Usa navigate(-1) per tornare alla pagina precedente mantenendo tutti i parametri URL
+    navigate(-1);
+  };
+
+  if (loading) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
+        <CircularProgress size={60} />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Caricamento formazione...
+        </Typography>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      </Container>
+    );
+  }
 
   if (!squadra || !formazione) {
     return (
@@ -38,8 +65,9 @@ const DettaglioSquadraPage: React.FC = () => {
       {/* Header con pulsante back */}
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
         <IconButton 
-          onClick={() => navigate('/formazioni')}
+          onClick={handleGoBack}
           sx={{ mr: 2 }}
+          aria-label="Torna indietro"
         >
           <ArrowBackIcon />
         </IconButton>
@@ -72,57 +100,12 @@ const DettaglioSquadraPage: React.FC = () => {
         <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
           Formazione Titolare
         </Typography>
-        <FormazioneList formazione={formazione.formazione} />
+        <FormazioneList 
+          formazione={formazione.formazione} 
+          onSquadRefresh={refreshFormazione}
+        />
       </Box>
 
-      {/* Statistiche squadra */}
-      <Box>
-        <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
-          Statistiche Stagione
-        </Typography>
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 2 }}>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
-            <Typography variant="h6" color="primary">
-              {formazione.statistiche.partiteGiocate}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Partite Giocate
-            </Typography>
-          </Paper>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
-            <Typography variant="h6" color="primary">
-              {formazione.statistiche.vittorie}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Vittorie
-            </Typography>
-          </Paper>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
-            <Typography variant="h6" color="primary">
-              {formazione.statistiche.pareggi}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Pareggi
-            </Typography>
-          </Paper>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
-            <Typography variant="h6" color="primary">
-              {formazione.statistiche.sconfitte}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Sconfitte
-            </Typography>
-          </Paper>
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
-            <Typography variant="h6" color="primary">
-              {formazione.statistiche.punti}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Punti
-            </Typography>
-          </Paper>
-        </Box>
-      </Box>
     </Container>
   );
 };

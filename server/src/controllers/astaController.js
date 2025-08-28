@@ -3,7 +3,7 @@ const astaService = require('../services/astaService');
 // Registra l'acquisto di un giocatore
 const registraAcquisto = async (req, res) => {
   try {
-    const { nome, squadra, ruolo, valore, squadraAcquirente, data, unveil_fvm, gazzetta_fascia, pazzidifanta, mia_valutazione, note } = req.body;
+    const { nome, squadra, ruolo, valore, squadraAcquirente, data, fascia, consiglio, mia_valutazione, note } = req.body;
     
     const acquisto = await astaService.registraAcquisto({
       nome,
@@ -12,9 +12,8 @@ const registraAcquisto = async (req, res) => {
       valore,
       squadraAcquirente,
       data: data || new Date().toISOString(),
-      unveil_fvm: unveil_fvm || '',
-      gazzetta_fascia: gazzetta_fascia || '',
-      pazzidifanta: pazzidifanta || '',
+      fascia: fascia || '',
+      consiglio: consiglio || '',
       mia_valutazione: mia_valutazione || '',
       note: note || ''
     });
