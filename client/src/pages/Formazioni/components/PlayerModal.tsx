@@ -7,38 +7,26 @@ import {
   Button,
   IconButton,
   TextField,
-  Switch,
-  FormControlLabel,
   Box,
   Typography,
   Chip,
-  Grid,
   Stack,
   Avatar,
   Alert,
   Snackbar,
   CircularProgress,
-  Divider,
-  Card,
-  CardContent,
   LinearProgress,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
   FormHelperText,
-  Paper,
   Tooltip
 } from '@mui/material';
 import {
   Close as CloseIcon,
-  Edit as EditIcon,
   Save as SaveIcon,
   Cancel as CancelIcon,
   Favorite as FavoriteIcon,
-  Star as StarIcon,
-  Euro as EuroIcon,
-  SportsSoccer as SoccerIcon,
   FavoriteBorder as FavoriteBorderIcon
 } from '@mui/icons-material';
 import { Giocatore } from '../../../types';
@@ -86,20 +74,6 @@ const getRuoloColor = (ruolo: string | undefined) => {
   }
 };
 
-const getStatusColor = (status: string | undefined) => {
-  if (!status) return 'default';
-  
-  switch (status) {
-    case 'disponibile':
-      return 'success';
-    case 'acquistato':
-      return 'primary';
-    case 'venduto':
-      return 'error';
-    default:
-      return 'default';
-  }
-};
 
 const PlayerModal: React.FC<PlayerModalProps> = ({ 
   open, 
