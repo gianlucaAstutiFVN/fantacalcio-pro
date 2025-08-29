@@ -29,6 +29,13 @@ export const squadreSerieA: Squadra[] = [
     colori: ['#dc2626', '#1e40af']
   },
   {
+    id: 'como',
+    nome: 'Como',
+    citta: 'Como',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Calcio_Como_-_logo_%28Italy%2C_2019-%29.svg/250px-Calcio_Como_-_logo_%28Italy%2C_2019-%29.svg.png',
+    colori: ['#dc2626', '#ffffff']
+  },
+  {
     id: 'cremonese',
     nome: 'Cremonese',
     citta: 'Cremona',
@@ -86,18 +93,18 @@ export const squadreSerieA: Squadra[] = [
     colori: ['#dc2626', '#000000']
   },
   {
-    id: 'monza',
-    nome: 'Monza',
-    citta: 'Monza',
-    logo: 'https://upload.wikimedia.org/wikipedia/it/thumb/6/65/Associazione_Calcio_Monza_%282019%29.svg/250px-Associazione_Calcio_Monza_%282019%29.svg.png',
-    colori: ['#dc2626', '#ffffff']
-  },
-  {
     id: 'napoli',
     nome: 'Napoli',
     citta: 'Napoli',
     logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/SSC_Napoli_2024_%28deep_blue_navy%29.svg/250px-SSC_Napoli_2024_%28deep_blue_navy%29.svg.png',
     colori: ['#1e40af', '#ffffff']
+  },
+  {
+    id: 'parma',
+    nome: 'Parma',
+    citta: 'Parma',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Logo_Parma_Calcio_1913_%28adozione_2016%29.svg/140px-Logo_Parma_Calcio_1913_%28adozione_2016%29.svg.png',
+    colori: ['#dc2626', '#1e40af']
   },
   {
     id: 'pisa',
@@ -111,13 +118,6 @@ export const squadreSerieA: Squadra[] = [
     nome: 'Roma',
     citta: 'Roma',
     logo: 'https://upload.wikimedia.org/wikipedia/it/thumb/0/0e/AS_Roma_Logo_2017.svg/250px-AS_Roma_Logo_2017.svg.png',
-    colori: ['#dc2626', '#1e40af']
-  },
-  {
-    id: 'salernitana',
-    nome: 'Salernitana',
-    citta: 'Salerno',
-    logo: 'https://upload.wikimedia.org/wikipedia/it/thumb/6/6a/US_Salernitana_1919.svg/250px-US_Salernitana_1919.svg.png',
     colori: ['#dc2626', '#1e40af']
   },
   {
