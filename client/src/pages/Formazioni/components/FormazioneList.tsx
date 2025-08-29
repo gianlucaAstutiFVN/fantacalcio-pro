@@ -55,7 +55,6 @@ const FormazioneList: React.FC<FormazioneListProps> = ({ formazione, onSquadRefr
   };
 
   const handlePlayerUpdated = (updatedPlayer: Giocatore) => {
-    console.log('Aggiornamento giocatore in FormazioneList:', updatedPlayer);
     // Aggiorna il giocatore nella formazione locale
     setLocalFormazione(prev => 
       prev.map(p => p.id === updatedPlayer.id ? updatedPlayer : p)
@@ -139,7 +138,7 @@ const FormazioneList: React.FC<FormazioneListProps> = ({ formazione, onSquadRefr
               <Chip
                 key={ruolo}
                 icon={<span>{getRuoloIcon(ruolo)}</span>}
-                label={`${ruolo}s: ${giocatori.length}`}
+                label={`${ruolo}: ${giocatori.length}`}
                 color={getRuoloColor(ruolo) as any}
                 variant="outlined"
                 sx={{ fontWeight: 'bold' }}
@@ -188,7 +187,7 @@ const FormazioneList: React.FC<FormazioneListProps> = ({ formazione, onSquadRefr
                     <Chip 
                       label={giocatoriPerRuolo[ruolo].length} 
                       size="small" 
-                      color={getRuoloColor(ruolo) as any}
+                      color={getRuoloColor(ruolo) as "primary" | "success" | "warning" | "error" | "default" | "info"}
                       sx={{ minWidth: 20, height: 20, fontSize: '0.75rem' }}
                     />
                   </Box>
@@ -258,7 +257,7 @@ const FormazioneList: React.FC<FormazioneListProps> = ({ formazione, onSquadRefr
                 }}>
                   <span style={{ fontSize: '1.5rem' }}>{getRuoloIcon(ruolo)}</span>
                   <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                    {ruolo}s
+                    {ruolo}
                   </Typography>
                   <Chip 
                     label={giocatoriPerRuolo[ruolo].length} 
@@ -294,7 +293,7 @@ const FormazioneList: React.FC<FormazioneListProps> = ({ formazione, onSquadRefr
                 gap: 1
               }}>
                 <span>{getRuoloIcon(selectedRuolo)}</span>
-                {selectedRuolo}s selezionati
+                {selectedRuolo}
                 <Chip 
                   label={giocatoriPerRuolo[selectedRuolo].length} 
                   size="small" 

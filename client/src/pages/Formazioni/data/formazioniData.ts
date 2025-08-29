@@ -1,3 +1,43 @@
+// Import all formation images
+import AtalantaLabImg from "../../../assets/formazioni/Atalanta_lab.jpeg";
+import AtalantaPazImg from "../../../assets/formazioni/Atalanta_paz.jpeg";
+import BolognaLabImg from "../../../assets/formazioni/Bologna_lab.jpeg";
+import BolognaPazImg from "../../../assets/formazioni/Bologna_paz.jpeg";
+import CagliariLabImg from "../../../assets/formazioni/Cagliari_lab.jpeg";
+import CagliariPazImg from "../../../assets/formazioni/Cagliari_paz.jpeg";
+import ComoLabImg from "../../../assets/formazioni/Como_lab.jpeg";
+import ComoPazImg from "../../../assets/formazioni/Como_paz.jpeg";
+import CremoneseLabImg from "../../../assets/formazioni/Cremonese_lab.jpeg";
+import CremonesePazImg from "../../../assets/formazioni/Cremonese_paz.jpeg";
+import FiorentinaLabImg from "../../../assets/formazioni/Fiorentina_lab.jpeg";
+import FiorentinaPazImg from "../../../assets/formazioni/Fiorentina_paz.jpeg";
+import GenoaLabImg from "../../../assets/formazioni/Genoa_lab.jpeg";
+import GenoaPazImg from "../../../assets/formazioni/Genoa_paz.jpeg";
+import InterLabImg from "../../../assets/formazioni/Inter_lab.jpeg";
+import InterPazImg from "../../../assets/formazioni/inter_paz.jpeg";
+import JuventusLabImg from "../../../assets/formazioni/Juventus_lab.jpeg";
+import JuventusPazImg from "../../../assets/formazioni/Juve_paz.jpeg";
+import LazioLabImg from "../../../assets/formazioni/Lazio_lab.jpeg";
+import LazioPazImg from "../../../assets/formazioni/Lazio_paz.jpeg";
+import LecceLabImg from "../../../assets/formazioni/Lecce_lab.jpeg";
+import LeccePazImg from "../../../assets/formazioni/lecce_paz.jpeg";
+import MilanPazImg from "../../../assets/formazioni/Milan_paz.jpeg";
+import NapoliLabImg from "../../../assets/formazioni/Napoli_lab.jpeg";
+import NapoliPazImg from "../../../assets/formazioni/Napoli_paz.jpeg";
+import ParmaLabImg from "../../../assets/formazioni/Parma_lab.jpeg";
+import ParmaPazImg from "../../../assets/formazioni/Parma_paz.jpeg";
+import PisaLabImg from "../../../assets/formazioni/Pisa_lab.jpeg";
+import PisaPazImg from "../../../assets/formazioni/Pisa_paz.jpeg";
+import RomaLabImg from "../../../assets/formazioni/Roma_lab.jpeg";
+import RomaPazImg from "../../../assets/formazioni/Roma_paz.jpeg";
+import SassuoloLabImg from "../../../assets/formazioni/Sassuolo_lab.jpeg";
+import SassuoloPazImg from "../../../assets/formazioni/Sassuolo_paz.jpeg";
+import TorinoLabImg from "../../../assets/formazioni/Torino_lab.jpeg";
+import TorinoPazImg from "../../../assets/formazioni/Torino_paz.jpeg";
+import UdinesePazImg from "../../../assets/formazioni/Udinese_paz.jpeg";
+import VeronaLabImg from "../../../assets/formazioni/Verona_lab.jpeg";
+import VeronaPazImg from "../../../assets/formazioni/Verona_paz.jpeg";
+
 export interface FormazioneData {
   squadra: string;
   images: string[];
@@ -7,139 +47,139 @@ export const formazioniData: FormazioneData[] = [
   {
     squadra: "Atalanta",
     images: [
-      "/src/assets/formazioni/Atalanta_lab.jpeg",
-      "/src/assets/formazioni/Atalanta_paz.jpeg"
+      AtalantaLabImg,
+      AtalantaPazImg
     ]
   },
   {
     squadra: "Bologna",
     images: [
-      "/src/assets/formazioni/Bologna_lab.jpeg",
-      "/src/assets/formazioni/Bologna_paz.jpeg"
+      BolognaLabImg,
+      BolognaPazImg
     ]
   },
   {
     squadra: "Cagliari",
     images: [
-      "/src/assets/formazioni/Cagliari_lab.jpeg",
-      "/src/assets/formazioni/Cagliari_paz.jpeg"
+      CagliariLabImg,
+      CagliariPazImg
     ]
   },
   {
     squadra: "Como",
     images: [
-      "/src/assets/formazioni/Como_lab.jpeg",
-      "/src/assets/formazioni/Como_paz.jpeg"
+      ComoLabImg,
+      ComoPazImg
     ]
   },
   {
     squadra: "Cremonese",
     images: [
-      "/src/assets/formazioni/Cremonese_lab.jpeg",
-      "/src/assets/formazioni/Cremonese_paz.jpeg"
+      CremoneseLabImg,
+      CremonesePazImg
     ]
   },
   {
     squadra: "Fiorentina",
     images: [
-      "/src/assets/formazioni/Fiorentina_lab.jpeg",
-      "/src/assets/formazioni/Fiorentina_paz.jpeg"
+      FiorentinaLabImg,
+      FiorentinaPazImg
     ]
   },
   {
     squadra: "Genoa",
     images: [
-      "/src/assets/formazioni/Genoa_lab.jpeg",
-      "/src/assets/formazioni/Genoa_paz.jpeg"
+      GenoaLabImg,
+      GenoaPazImg
     ]
   },
   {
     squadra: "Inter",
     images: [
-      "/src/assets/formazioni/Inter_lab.jpeg",
-      "/src/assets/formazioni/inter_paz.jpeg"
+      InterLabImg,
+      InterPazImg
     ]
   },
   {
     squadra: "Juventus",
     images: [
-      "/src/assets/formazioni/Juventus_lab.jpeg",
-      "/src/assets/formazioni/Juve_paz.jpeg"
+      JuventusLabImg,
+      JuventusPazImg
     ]
   },
   {
     squadra: "Lazio",
     images: [
-      "/src/assets/formazioni/Lazio_lab.jpeg",
-      "/src/assets/formazioni/Lazio_paz.jpeg"
+      LazioLabImg,
+      LazioPazImg
     ]
   },
   {
     squadra: "Lecce",
     images: [
-      "/src/assets/formazioni/Lecce_lab.jpeg",
-      "/src/assets/formazioni/lecce_paz.jpeg"
+      LecceLabImg,
+      LeccePazImg
     ]
   },
   {
     squadra: "Milan",
     images: [
-      "/src/assets/formazioni/Milan_paz.jpeg"
+      MilanPazImg
     ]
   },
   {
     squadra: "Napoli",
     images: [
-      "/src/assets/formazioni/Napoli_lab.jpeg",
-      "/src/assets/formazioni/Napoli_paz.jpeg"
+      NapoliLabImg,
+      NapoliPazImg
     ]
   },
   {
     squadra: "Parma",
     images: [
-      "/src/assets/formazioni/Parma_lab.jpeg",
-      "/src/assets/formazioni/Parma_paz.jpeg"
+      ParmaLabImg,
+      ParmaPazImg
     ]
   },
   {
     squadra: "Pisa",
     images: [
-      "/src/assets/formazioni/Pisa_lab.jpeg",
-      "/src/assets/formazioni/Pisa_paz.jpeg"
+      PisaLabImg,
+      PisaPazImg
     ]
   },
   {
     squadra: "Roma",
     images: [
-      "/src/assets/formazioni/Roma_lab.jpeg",
-      "/src/assets/formazioni/Roma_paz.jpeg"
+      RomaLabImg,
+      RomaPazImg
     ]
   },
   {
     squadra: "Sassuolo",
     images: [
-      "/src/assets/formazioni/Sassuolo_paz.jpeg",
-      "/src/assets/formazioni/Sassuolo_lab.jpeg"
+      SassuoloPazImg,
+      SassuoloLabImg
     ]
   },
   {
     squadra: "Torino",
     images: [
-      "/src/assets/formazioni/Torino_lab.jpeg",
-      "/src/assets/formazioni/Torino_paz.jpeg"
+      TorinoLabImg,
+      TorinoPazImg
     ]
   },
   {
     squadra: "Udinese",
     images: [
-      "/src/assets/formazioni/Udinese_paz.jpeg"
+      UdinesePazImg
     ]
   },
   {
     squadra: "Verona",
     images: [
-      "/src/assets/formazioni/Verona_lab.jpeg",
-      "/src/assets/formazioni/Verona_paz.jpeg"
+      VeronaLabImg,
+      VeronaPazImg
     ]
   }
 ];

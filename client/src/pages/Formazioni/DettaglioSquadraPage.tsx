@@ -90,7 +90,7 @@ const DettaglioSquadraPage: React.FC = () => {
       {/* Carousel di immagini */}
       <Box sx={{ mb: 6 }}>
         <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
-          Galleria Squadra
+           Squadra
         </Typography>
         <ImageCarousel />
       </Box>

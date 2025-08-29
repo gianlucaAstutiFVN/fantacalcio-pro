@@ -133,7 +133,11 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
         height: '100%',
         cursor: 'pointer',
         border: `2px solid ${getCardBorderColor(giocatore)}`,
-        backgroundColor: giocatore.status === 'acquistato' ? 'grey.400' : 'background.paper',
+        backgroundColor: giocatore.status === 'acquistato' && giocatore.inWishlist ? '#957272'
+         : giocatore.inWishlist ? '#fb9898' 
+         : giocatore.status === 'acquistato' ? 'grey.400' 
+         : 'background.paper',
+
         transition: 'all 0.3s ease-in-out',
         position: 'relative',
         '&:hover': {
