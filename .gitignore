@@ -84,6 +84,10 @@ jspm_packages/
 server/uploads/
 uploads/
 
+# Temporary files
+server/temp/
+temp/
+
 # IDE files
 .vscode/
 .idea/

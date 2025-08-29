@@ -447,13 +447,19 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
                       sx={{ borderRadius: 2 }}
                     >
                       <MenuItem value="">Nessuna fascia</MenuItem>
-                      <MenuItem value="Alta">Alta</MenuItem>
-                      <MenuItem value="Media">Media</MenuItem>
-                      <MenuItem value="Bassa">Bassa</MenuItem>
+                      <MenuItem value="1-TOP">1-TOP</MenuItem>
+                      <MenuItem value="2-SEMI-TOP">2-SEMI-TOP</MenuItem>
+                      <MenuItem value="3-Sotto ai semi top">3-Sotto ai semi top</MenuItem>
+                      <MenuItem value="5-Jolly 1 Fascia">5-Jolly 1 Fascia</MenuItem>
+                      <MenuItem value="4-Fascia alta">4-Fascia alta</MenuItem>
+                      <MenuItem value="6-Fascia Media">6-Fascia Media</MenuItem>
+                      <MenuItem value="7-Low Cost 1 fascia">7-Low Cost 1 fascia</MenuItem>
+                      <MenuItem value="8-LowCost 2 fascia">8-LowCost 2 fascia</MenuItem>
+                      <MenuItem value="9-Scommesse">9-Scommesse</MenuItem>
                     </Select>
                     {errors.fascia && <FormHelperText>{errors.fascia}</FormHelperText>}
                     {!errors.fascia && (
-                      <FormHelperText>Classifica del giocatore (Alta, Media, Bassa)</FormHelperText>
+                      <FormHelperText>Classifica del giocatore</FormHelperText>
                     )}
                   </FormControl>
                 </Box>

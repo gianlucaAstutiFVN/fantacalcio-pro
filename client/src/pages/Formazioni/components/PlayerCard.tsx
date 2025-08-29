@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import {
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
   Avatar,
   Typography,
   Box,
   Chip,
   Tooltip,
   IconButton,
-  CircularProgress
+  CircularProgress,
+  Card,
+  CardContent,
+  CardActions,
+  Divider
 } from '@mui/material';
 import {
   Favorite as FavoriteIcon,
-  FavoriteBorder as FavoriteBorderIcon
+  FavoriteBorder as FavoriteBorderIcon,
+  Star as StarIcon,
+  SportsSoccer as SoccerIcon,
 } from '@mui/icons-material';
 import { Giocatore } from '../../../types';
 import { wishlistAPI } from '../../../services/api';
@@ -27,7 +30,7 @@ interface PlayerCardProps {
 
 const getRuoloIcon = (ruolo: string | undefined) => {
   if (!ruolo) return '👤';
-  
+
   switch (ruolo.toLowerCase()) {
     case 'portiere':
       return '🛡️';
@@ -44,7 +47,7 @@ const getRuoloIcon = (ruolo: string | undefined) => {
 
 const getRuoloColor = (ruolo: string | undefined) => {
   if (!ruolo) return 'default';
-  
+
   switch (ruolo.toLowerCase()) {
     case 'portiere':
       return 'primary';
@@ -59,22 +62,19 @@ const getRuoloColor = (ruolo: string | undefined) => {
   }
 };
 
-const getStatusColor = (status: string | undefined) => {
-  if (!status) return 'default';
-  
-  switch (status) {
-    case 'disponibile':
-      return 'success';
-    case 'acquistato':
-      return 'primary';
-    case 'venduto':
-      return 'error';
-    default:
-      return 'default';
+
+const getCardBorderColor = (giocatore: Giocatore) => {
+  // Rosso se nei preferiti/wishlist
+  if (giocatore.inWishlist || giocatore.preferito) {
+    return 'red';
   }
 };
 
-const PlayerCard: React.FC<PlayerCardProps> = ({ giocatore, index, onClick, onPlayerUpdated }) => {
+const PlayerCard: React.FC<PlayerCardProps> = ({
+  giocatore,
+  onClick,
+  onPlayerUpdated,
+}) => {
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [optimisticWishlist, setOptimisticWishlist] = useState<boolean | null>(null);
 
@@ -88,12 +88,12 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ giocatore, index, onClick, onPl
 
   const handleWishlistToggle = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Previene l'apertura del modal
-    
+
     if (!giocatore.id) return;
-    
+
     // Salva lo stato precedente per il rollback in caso di errore
     const previousState = giocatore.inWishlist || false;
-    
+
     // Aggiornamento ottimistico immediato
     setOptimisticWishlist(!currentWishlistState);
     setWishlistLoading(true);
@@ -104,7 +104,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ giocatore, index, onClick, onPl
       } else {
         await wishlistAPI.add(giocatore.id);
       }
-      
+
       // Se l'API ha successo, mantieni lo stato ottimistico e aggiorna il giocatore
       if (onPlayerUpdated) {
         const updatedGiocatore = {
@@ -113,10 +113,10 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ giocatore, index, onClick, onPl
         };
         onPlayerUpdated(updatedGiocatore);
       }
-      
+
     } catch (error) {
       console.error('Errore nella gestione wishlist:', error);
-      
+
       // Rollback in caso di errore
       setOptimisticWishlist(previousState);
     } finally {
@@ -124,137 +124,159 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ giocatore, index, onClick, onPl
     }
   };
 
+
+
   return (
-    <ListItem 
-      button
+    <Card
       onClick={() => onClick(giocatore)}
       sx={{
-        border: 1,
-        borderColor: 'divider',
-        borderRadius: 1,
-        mb: 1,
-        backgroundColor: 'background.paper',
+        height: '100%',
         cursor: 'pointer',
+        border: `2px solid ${getCardBorderColor(giocatore)}`,
+        backgroundColor: giocatore.status === 'acquistato' ? 'grey.400' : 'background.paper',
+        transition: 'all 0.3s ease-in-out',
+        position: 'relative',
         '&:hover': {
-          backgroundColor: 'action.hover',
-          transform: 'translateX(4px)',
-          transition: 'all 0.2s ease-in-out',
-          boxShadow: 2
+          transform: 'translateY(-4px)',
+          boxShadow: 8,
         }
       }}
     >
-      <ListItemAvatar>
-        <Avatar 
-          sx={{ 
-            bgcolor: `${getRuoloColor(giocatore.ruolo)}.main`,
-            width: 45,
-            height: 45
-          }}
-        >
-          {getRuoloIcon(giocatore.ruolo)}
-        </Avatar>
-      </ListItemAvatar>
-      
-      <ListItemText
-        primary={
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-            <Typography variant="subtitle1" fontWeight="bold" color="primary">
+      <CardContent sx={{ p: 3 }}>
+        {/* Header con avatar e nome */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, position: 'relative' }}>
+          <Avatar
+            sx={{
+              bgcolor: `${getRuoloColor(giocatore.ruolo)}.main`,
+              width: 60,
+              height: 60,
+              fontSize: '1.5rem'
+            }}
+          >
+            {getRuoloIcon(giocatore.ruolo)}
+          </Avatar>
+          <Chip
+            icon={<StarIcon fontSize="small" />}
+            label={`${giocatore.gazzetta || 0}`}
+            color={'primary'}
+            variant="filled"
+            sx={{ fontWeight: 'bold', fontSize: '1.2rem', position: 'absolute', top: -20, left: -20, zIndex: 1000 }}
+          />
+
+
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="h6" fontWeight="bold" color="primary" gutterBottom>
               {giocatore.nome}
             </Typography>
-            <Chip 
-              label={`#${index + 1}`} 
-              size="small" 
-              color={getRuoloColor(giocatore.ruolo)}
-              variant="outlined"
-              sx={{ minWidth: 35 }}
-            />
-            {/* Wishlist Button */}
-            <Tooltip title={`${currentWishlistState ? 'Rimuovi da' : 'Aggiungi a'} wishlist`}>
-              <IconButton
-                size="small"
-                onClick={handleWishlistToggle}
-                disabled={wishlistLoading}
-                sx={{ 
-                  minWidth: 32, 
-                  height: 32,
-                  color: currentWishlistState ? 'error.main' : 'action.active',
-                  '&:hover': {
-                    backgroundColor: currentWishlistState ? 'error.light' : 'action.hover'
-                  }
-                }}
-              >
-                {wishlistLoading ? (
-                  <CircularProgress size={16} />
-                ) : currentWishlistState ? (
-                  <FavoriteIcon fontSize="small" />
-                ) : (
-                  <FavoriteBorderIcon fontSize="small" />
-                )}
-              </IconButton>
-            </Tooltip>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+              {giocatore.status === 'acquistato' && giocatore.fantasquadra ? (
+                <Chip
+                  label={`${giocatore.nome_squadra_acquirente} €${giocatore.prezzo_acquisto}`}
+                  size="small"
+                  color="error"
+                  variant="filled"
+                  icon={<SoccerIcon fontSize="small" />}
+                  sx={{ fontWeight: 'bold' }}
+                />
+              ) : (
+                <Chip
+                  label={giocatore.status}
+                  size="small"
+                  // color={getStatusColor(giocatore.status) as any}
+                  variant="outlined"
+                />
+              )}
+            </Box>
           </Box>
-        }
-        secondary={
-          <Typography component="div" sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            {/* Squadra e Status */}
-            <Typography component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-              <Typography variant="caption" color="text.secondary" fontWeight="medium">
-                {giocatore.squadra}
-              </Typography>
-              <Chip 
-                label={giocatore.status} 
-                size="small" 
-                color={getStatusColor(giocatore.status)}
+
+        </Box>
+
+        <Divider sx={{ mb: 2 }} />
+
+        {/* Valutazioni principali */}
+        <Box sx={{ mb: 2 }}>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center', mb: 1 }}>
+            {giocatore.fascia && (
+              <Chip
+                label={`Fascia: ${giocatore.fascia}`}
+                size="small"
+                color="warning"
                 variant="outlined"
               />
-            </Typography>
+            )}
+          </Box>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
 
-            {/* Valutazioni principali */}
-            <Typography component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-              {giocatore.mia_valutazione && (
-                <Chip 
-                  label={`Val: ${giocatore.mia_valutazione}`} 
-                  size="small" 
-                  color="primary"
-                  variant="outlined"
-                />
-              )}
-              {giocatore.gazzetta && (
-                <Chip 
-                  label={`Gaz: ${giocatore.gazzetta}`} 
-                  size="small" 
-                  color="info"
-                  variant="outlined"
-                />
-              )}
-              {giocatore.quotazione && (
-                <Chip 
-                  label={`Quot: ${giocatore.quotazione}`} 
-                  size="small" 
-                  color="success"
-                  variant="outlined"
-                />
-              )}
-            </Typography>
-
-            {/* Fantasquadra */}
-            {giocatore.fantasquadra && (
-              <Typography variant="caption" color="primary" fontWeight="bold">
-                {giocatore.fantasquadra}
-              </Typography>
+            {giocatore.mia_valutazione && (
+              <Chip
+                icon={<StarIcon />}
+                label={`mia Valutazione: ${giocatore.mia_valutazione} `}
+                size="medium"
+                color="primary"
+                variant="filled"
+              />
             )}
 
-            {/* Prezzo acquisto */}
-            {giocatore.prezzo_acquisto && (
-              <Typography variant="caption" color="success.main" fontWeight="bold">
-                €{giocatore.prezzo_acquisto}
+          </Box>
+        </Box>
+
+        {/* Valutazioni aggiuntive */}
+        {(giocatore.consiglio) && (
+          <Box sx={{ mb: 2 }}>
+
+            {giocatore.consiglio && (
+              <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                <b>Consiglio:</b>      {` ${giocatore.consiglio}`}
               </Typography>
+
             )}
-          </Typography>
-        }
-      />
-    </ListItem>
+
+          </Box>
+        )}
+
+        {/* Informazioni aggiuntive */}
+        {giocatore.note && (
+          <Box sx={{ mb: 2 }}>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              {giocatore.note && (
+                <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                  <b>Note:</b>    {giocatore.note}
+                </Typography>
+              )}
+            </Box>
+          </Box>
+        )}
+
+      </CardContent>
+
+      <CardActions sx={{ p: 2, pt: 0, position: 'absolute', bottom: 0, right: 0 }}>
+        <Tooltip title={`${currentWishlistState ? 'Rimuovi da' : 'Aggiungi a'} wishlist`}>
+          <IconButton
+            onClick={handleWishlistToggle}
+            disabled={wishlistLoading}
+            sx={{
+              color: currentWishlistState ? 'error.main' : 'action.active',
+              alignSelf: 'flex-end',
+              '&:hover': {
+                backgroundColor: currentWishlistState ? 'error.light' : 'action.hover'
+              }
+            }}
+          >
+            {wishlistLoading ? (
+              <CircularProgress size={20} />
+            ) : currentWishlistState ? (
+              <FavoriteIcon />
+            ) : (
+              <FavoriteBorderIcon />
+            )}
+          </IconButton>
+        </Tooltip>
+      </CardActions>
+    </Card>
   );
+
 };
+
 
 export default PlayerCard;

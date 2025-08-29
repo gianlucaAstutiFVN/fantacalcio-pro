@@ -3,21 +3,12 @@ import {
   Chip,
   Typography,
   IconButton,
-  Tooltip,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
 } from '@mui/material'
 import { 
-  MoreVert as MoreVertIcon,
   EditNote as EditNoteIcon,
-  Star as StarIcon,
-  Info as InfoIcon,
 } from '@mui/icons-material'
 import { GridColDef } from '@mui/x-data-grid'
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
 import { Giocatore } from '../../../types'
 import { squadreSerieA } from '../../Formazioni/data/squadreData'
 import ActionButtons from './ActionDataGrid/ActionButtons'
@@ -45,31 +36,13 @@ const ActionsCell = ({
   onSvincolaGiocatore: (giocatore: Giocatore) => void
   onEditAllFields: (giocatore: Giocatore) => void
 }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const open = Boolean(anchorEl)
-  
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-  
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
+
+
   
   const handleEditFields = () => {
     onEditAllFields(giocatore)
-    handleClose()
   }
   
-  const handleAssegna = () => {
-    onAssegnaGiocatore(giocatore)
-    handleClose()
-  }
-  
-  const handleSvincola = () => {
-    onSvincolaGiocatore(giocatore)
-    handleClose()
-  }
   
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -80,10 +53,10 @@ const ActionsCell = ({
         onSvincolaGiocatore={onSvincolaGiocatore}
       />
       
-      <Tooltip title="Altre azioni">
+     
         <IconButton
           size="small"
-          onClick={handleClick}
+          onClick={handleEditFields}
           sx={{ 
             p: 0.5,
             '&:hover': { 
@@ -92,48 +65,9 @@ const ActionsCell = ({
             }
           }}
         >
-          <MoreVertIcon fontSize="small" />
+          <EditNoteIcon fontSize="small" />
         </IconButton>
-      </Tooltip>
-      
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        <MenuItem onClick={handleEditFields}>
-          <ListItemIcon>
-            <EditNoteIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Modifica Campi</ListItemText>
-        </MenuItem>
-        
-        {!isAcquistato && (
-          <MenuItem onClick={handleAssegna}>
-            <ListItemIcon>
-              <StarIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Assegna Giocatore</ListItemText>
-          </MenuItem>
-        )}
-        
-        {isAcquistato && (
-          <MenuItem onClick={handleSvincola}>
-            <ListItemIcon>
-              <InfoIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Svincola Giocatore</ListItemText>
-          </MenuItem>
-        )}
-      </Menu>
+    
     </Box>
   )
 }

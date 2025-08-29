@@ -10,9 +10,13 @@ import {
   TextField,
   Alert,
   Grid,
+  FormControl,
+  Select,
+  MenuItem,
+  FormHelperText,
 } from '@mui/material'
 import { Edit as EditIcon } from '@mui/icons-material'
-import { Giocatore } from '../../../../types'
+import { Giocatore, Fascia } from '../../../../types'
 import { giocatoriAPI } from '../../../../services/api'
 
 interface EditGiocatoreFieldsDialogProps {
@@ -236,17 +240,32 @@ const EditGiocatoreFieldsDialog: React.FC<EditGiocatoreFieldsDialogProps> = ({
 
             {/* Campo Fascia */}
             <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Fascia"
-                value={fields.fascia}
-                onChange={(e) => setFields({ ...fields, fascia: e.target.value })}
-                error={!!errors.fascia}
-                helperText={errors.fascia || `Caratteri: ${fields.fascia.length}/100`}
-                placeholder="Es: Alta, Media, Bassa"
-                disabled={loading}
-                variant="outlined"
-              />
+              <FormControl fullWidth error={!!errors.fascia}>
+                <Select
+                  value={fields.fascia}
+                  onChange={(e) => setFields({ ...fields, fascia: e.target.value })}
+                  size="medium"
+                    label="Fascia"
+                  placeholder="Fascia"
+                  sx={{ borderRadius: 2 }}
+                  disabled={loading}
+                >
+                  <MenuItem value="">Nessuna fascia</MenuItem>
+                  <MenuItem value={Fascia.TOP}>{Fascia.TOP}</MenuItem>
+                  <MenuItem value={Fascia.SEMI_TOP}>{Fascia.SEMI_TOP}</MenuItem>
+                  <MenuItem value={Fascia.SOTTO_SEMI_TOP}>{Fascia.SOTTO_SEMI_TOP}</MenuItem>
+                  <MenuItem value={Fascia.JOLLY_1_FASCIA}>{Fascia.JOLLY_1_FASCIA}</MenuItem>
+                  <MenuItem value={Fascia.FASCIA_ALTA}>{Fascia.FASCIA_ALTA}</MenuItem>
+                  <MenuItem value={Fascia.FASCIA_MEDIA}>{Fascia.FASCIA_MEDIA}</MenuItem>
+                  <MenuItem value={Fascia.LOW_COST_1_FASCIA}>{Fascia.LOW_COST_1_FASCIA}</MenuItem>
+                  <MenuItem value={Fascia.LOW_COST_2_FASCIA}>{Fascia.LOW_COST_2_FASCIA}</MenuItem>
+                  <MenuItem value={Fascia.SCOMMESSE}>{Fascia.SCOMMESSE}</MenuItem>
+                </Select>
+                {errors.fascia && <FormHelperText>{errors.fascia}</FormHelperText>}
+                {!errors.fascia && (
+                  <FormHelperText>Classifica del giocatore</FormHelperText>
+                )}
+              </FormControl>
             </Grid>
 
             {/* Campo Consiglio */}
@@ -296,10 +315,10 @@ const EditGiocatoreFieldsDialog: React.FC<EditGiocatoreFieldsDialogProps> = ({
                   • <strong>Valutazione:</strong> 1-10 basata sulle prestazioni e potenziale
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                  • <strong>Fascia:</strong> Classifica del giocatore (Alta, Media, Bassa)
+                  • <strong>Fascia:</strong> Classifica del giocatore 
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                  • <strong>Consiglio:</strong> Raccomandazioni per l'acquisto/vendita
+                  • <strong>Consiglio:</strong> Raccomandazioni per l'acquisto
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   • <strong>Note:</strong> Osservazioni personali e dettagli aggiuntivi

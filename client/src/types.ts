@@ -1,3 +1,15 @@
+export enum Fascia {
+  TOP = "1-TOP",
+  SEMI_TOP = "2-SEMI-TOP",
+  SOTTO_SEMI_TOP = "3-Sotto ai semi top",
+  JOLLY_1_FASCIA = "5-Jolly 1 Fascia",
+  FASCIA_ALTA = "4-Fascia alta",
+  FASCIA_MEDIA = "6-Fascia Media",
+  LOW_COST_1_FASCIA = "7-Low Cost 1 fascia",
+  LOW_COST_2_FASCIA = "8-LowCost 2 fascia",
+  SCOMMESSE = "9-Scommesse"
+}
+
 export interface Giocatore {
   id: string
   nome: string
@@ -5,7 +17,7 @@ export interface Giocatore {
   squadra_giocatore?: string,
   ruolo: 'portiere' | 'difensore' | 'centrocampista' | 'attaccante'
   gazzetta?: number | null
-  fascia?: string | null
+  fascia?: Fascia | null
   consiglio?: string | null
   mia_valutazione?: number | null
   note?: string | null

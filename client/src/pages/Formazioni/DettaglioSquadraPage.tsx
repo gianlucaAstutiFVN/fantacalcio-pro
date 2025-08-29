@@ -92,7 +92,7 @@ const DettaglioSquadraPage: React.FC = () => {
         <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
           Galleria Squadra
         </Typography>
-        <ImageCarousel images={formazione.immagini} />
+        <ImageCarousel />
       </Box>
 
       {/* Formazione */}

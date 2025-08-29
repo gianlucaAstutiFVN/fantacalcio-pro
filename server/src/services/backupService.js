@@ -173,11 +173,18 @@ class BackupService {
         throw error;
       }
       
-      // Pulisci il file temporaneo
-      fs.unlinkSync(backupFilePath);
-      
     } catch (error) {
       throw error;
+    } finally {
+      // Pulisci sempre il file temporaneo, anche in caso di errore
+      try {
+        if (fs.existsSync(backupFilePath)) {
+          fs.unlinkSync(backupFilePath);
+          console.log('🗑️ File temporaneo rimosso:', backupFilePath);
+        }
+      } catch (cleanupError) {
+        console.warn('⚠️ Errore durante la rimozione del file temporaneo:', cleanupError.message);
+      }
     }
   }
 

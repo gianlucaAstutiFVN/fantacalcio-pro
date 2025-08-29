@@ -1,11 +1,78 @@
 const express = require('express');
 const multer = require('multer');
 const router = express.Router();
+const fs = require('fs');
+const path = require('path');
+
+// Determina la cartella temp da usare
+let tempDir = path.join(__dirname, '..', '..', 'temp');
+try {
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+    console.log('📁 Cartella temp creata:', tempDir);
+  }
+} catch (error) {
+  console.error('⚠️ Errore nella creazione della cartella temp:', error.message);
+  // Fallback: usa la cartella temporanea del sistema
+  const os = require('os');
+  tempDir = path.join(os.tmpdir(), 'fantacalcio-backup');
+  try {
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
+    console.log('📁 Usando cartella temp di fallback:', tempDir);
+  } catch (fallbackError) {
+    console.error('❌ Errore critico: impossibile creare cartella temporanea:', fallbackError.message);
+    throw new Error('Impossibile creare cartella temporanea per i backup');
+  }
+}
+
+// Funzione per pulire i file temporanei più vecchi di 1 ora
+const cleanupTempFiles = () => {
+  try {
+    if (!fs.existsSync(tempDir)) {
+      console.log('📁 Cartella temp non esiste, niente da pulire');
+      return;
+    }
+    
+    const files = fs.readdirSync(tempDir);
+    const now = Date.now();
+    const oneHour = 60 * 60 * 1000; // 1 ora in millisecondi
+    let removedCount = 0;
+    
+    files.forEach(file => {
+      try {
+        const filePath = path.join(tempDir, file);
+        const stats = fs.statSync(filePath);
+        
+        // Se il file è più vecchio di 1 ora, eliminalo
+        if (now - stats.mtime.getTime() > oneHour) {
+          fs.unlinkSync(filePath);
+          console.log(`🗑️ Rimosso file temporaneo: ${file}`);
+          removedCount++;
+        }
+      } catch (fileError) {
+        console.warn(`⚠️ Errore durante la gestione del file ${file}:`, fileError.message);
+      }
+    });
+    
+    if (removedCount > 0) {
+      console.log(`🧹 Pulizia completata: rimossi ${removedCount} file temporanei`);
+    } else {
+      console.log('🧹 Nessun file temporaneo da rimuovere');
+    }
+  } catch (error) {
+    console.error('Errore durante la pulizia dei file temporanei:', error);
+  }
+};
+
+// Pulisci i file temporanei all'avvio del server
+cleanupTempFiles();
 
 // Configurazione multer per upload file di backup
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    cb(null, tempDir);
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -48,6 +115,25 @@ router.get('/health', (req, res) => {
     message: 'Server Fantacalcio Asta funzionante',
     timestamp: new Date().toISOString()
   });
+});
+
+// Route per pulire i file temporanei
+router.post('/cleanup-temp', (req, res) => {
+  try {
+    cleanupTempFiles();
+    res.json({ 
+      success: true, 
+      message: 'Pulizia file temporanei completata',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Errore pulizia file temporanei:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Errore durante la pulizia dei file temporanei',
+      details: error.message
+    });
+  }
 });
 
 

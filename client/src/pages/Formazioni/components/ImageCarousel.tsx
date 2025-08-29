@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Box,
   IconButton,
@@ -11,13 +12,39 @@ import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon
 } from '@mui/icons-material';
+import { squadreSerieA } from '../data/squadreData';
+import formazioniData from '../data/formazioniData';
 
 interface ImageCarouselProps {
-  images: string[];
+  // Props opzionali per override delle immagini
+  customImages?: string[];
 }
 
-const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
+const ImageCarousel: React.FC<ImageCarouselProps> = ({ customImages }) => {
+  const { squadraId } = useParams<{ squadraId: string }>();
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Trova la squadra dai parametri URL
+  const squadra = useMemo(() => {
+    return squadreSerieA.find(s => s.id === squadraId);
+  }, [squadraId]);
+
+  // Genera le immagini per la squadra selezionata
+  const images = useMemo(() => {
+    if (customImages) {
+      return customImages;
+    }
+
+    if (!squadra) {
+      return [];
+    }
+
+    // Mappa delle squadre con le loro immagini disponibili
+ 
+
+    // Restituisce le immagini per la squadra selezionata
+    return formazioniData.find(f => f.squadra === squadra.nome)?.images || [];
+  }, [squadra, customImages]);
 
   const handlePrevious = () => {
     setCurrentIndex((prevIndex) => 
@@ -31,11 +58,29 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
     );
   };
 
+  // Reset index quando cambiano le immagini
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [images]);
+
+  if (!squadra) {
+    return (
+      <Paper sx={{ p: 4, textAlign: 'center' }}>
+        <Typography variant="body1" color="text.secondary">
+          Squadra non trovata
+        </Typography>
+      </Paper>
+    );
+  }
+
   if (!images || images.length === 0) {
     return (
       <Paper sx={{ p: 4, textAlign: 'center' }}>
         <Typography variant="body1" color="text.secondary">
-          Nessuna immagine disponibile
+          Nessuna immagine disponibile per {squadra.nome}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          Le immagini per questa squadra non sono ancora state caricate
         </Typography>
       </Paper>
     );
@@ -44,15 +89,19 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
   return (
     <Box sx={{ position: 'relative', width: '100%' }}>
       {/* Immagine principale */}
-      <Card sx={{ width: '100%', height: 400, position: 'relative' }}>
+      <Card sx={{ width: '100%', height: 600, position: 'relative' }}>
         <CardMedia
           component="img"
           image={images[currentIndex]}
-          alt={`Immagine ${currentIndex + 1}`}
+          alt={`${squadra.nome} - Immagine ${currentIndex + 1}`}
           sx={{ 
             width: '100%', 
             height: '100%', 
-            objectFit: 'cover'
+            objectFit: 'contain'
+          }}
+          onError={() => {
+            console.warn(`Errore nel caricamento dell'immagine: ${images[currentIndex]}`);
+            // Potremmo implementare un fallback qui
           }}
         />
         
@@ -126,7 +175,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ images }) => {
             mt: 2
           }}
         >
-          {images.map((image, index) => (
+          {images.map((image: string, index: number) => (
             <Box
               key={`image-${index}-${image}`}
               onClick={() => setCurrentIndex(index)}
