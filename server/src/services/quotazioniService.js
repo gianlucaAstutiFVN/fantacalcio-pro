@@ -8,6 +8,7 @@ class QuotazioniService {
     // Ottiene tutte le quotazioni con informazioni giocatore
     async getAllQuotazioni() {
         try {
+            await this.db.connect();
             const query = `
                 SELECT 
                     q.id,
@@ -43,6 +44,7 @@ class QuotazioniService {
     // Ottiene quotazioni per giocatore specifico
     async getQuotazioniByGiocatore(giocatoreId) {
         try {
+            await this.db.connect();
             const query = `
                 SELECT 
                     q.*,
@@ -69,6 +71,7 @@ class QuotazioniService {
     // Crea nuova quotazione
     async createQuotazione(quotazioneData) {
         try {
+            await this.db.connect();
             const {
                 giocatore_id,
                 gazzetta,
@@ -119,6 +122,7 @@ class QuotazioniService {
     // Aggiorna quotazione esistente
     async updateQuotazione(id, quotazioneData) {
         try {
+            await this.db.connect();
             const {
                 gazzetta,
                 fascia,
@@ -165,6 +169,7 @@ class QuotazioniService {
     // Elimina quotazione
     async deleteQuotazione(id) {
         try {
+            await this.db.connect();
             // Verifica che la quotazione esista
             const quotazione = await this.db.get('SELECT id FROM quotazioni WHERE id = ?', [id]);
             if (!quotazione) {
@@ -186,10 +191,35 @@ class QuotazioniService {
     // Importa quotazioni da CSV
     async importFromCSV(csvData) {
         try {
+            await this.db.connect();
+            
+            // Verifica che il CSV abbia i dati necessari
+            if (!csvData || csvData.length === 0) {
+                throw new Error('CSV vuoto o senza dati');
+            }
+            
+            // Log delle colonne disponibili per debug
+            if (csvData.length > 0) {
+                const columns = Object.keys(csvData[0]);
+                console.log('📋 Colonne CSV rilevate:', columns);
+                
+                // Verifica colonne obbligatorie
+                if (!columns.includes('Nome') || !columns.includes('Squadra')) {
+                    throw new Error('CSV deve contenere le colonne "Nome" e "Squadra"');
+                }
+            }
+            
             const results = [];
             const errors = [];
 
-            for (const row of csvData) {
+            for (let i = 0; i < csvData.length; i++) {
+                const row = csvData[i];
+                
+                // Log progresso ogni 50 righe
+                if (i % 50 === 0) {
+                    console.log(`📊 Processando riga ${i + 1}/${csvData.length}...`);
+                }
+                
                 try {
                     // Verifica che il giocatore esista
                     const giocatore = await this.db.get(
@@ -221,31 +251,31 @@ class QuotazioniService {
                         return existingValue;
                     };
 
-                    // Mapping per supportare sia "Gazzetta" che "FVM" dal CSV
-                    // Se il CSV ha "FVM", lo mappa alla colonna "gazzetta" del database
+                    // Mapping per supportare le colonne del CSV
+                    // Il CSV ha "Fantagazzetta" che mappa alla colonna "gazzetta" del database
                     let gazzettaValue = null;
-                    if (row.FVM !== null && row.FVM !== undefined && row.FVM !== '') {
+                    if (row.Fantagazzetta !== null && row.Fantagazzetta !== undefined && row.Fantagazzetta !== '') {
+                        gazzettaValue = row.Fantagazzetta;
+                        console.log(`🔄 Usando colonna Fantagazzetta per ${row.Nome}: ${row.Fantagazzetta}`);
+                    } else if (row.FVM !== null && row.FVM !== undefined && row.FVM !== '') {
                         gazzettaValue = row.FVM;
                         console.log(`🔄 Mapping FVM -> fantagazzetta per ${row.Nome}: ${row.FVM}`);
                     } else if (row.Gazzetta !== null && row.Gazzetta !== undefined && row.Gazzetta !== '') {
                         gazzettaValue = row.Gazzetta;
                         console.log(`🔄 Usando colonna Gazzetta per ${row.Nome}: ${row.Gazzetta}`);
-                    } else if (row.Fantagazzetta !== null && row.Fantagazzetta !== undefined && row.Fantagazzetta !== '') {
-                        gazzettaValue = row.Fantagazzetta;
-                        console.log(`🔄 Usando colonna Fantagazzetta per ${row.Nome}: ${row.Fantagazzetta}`);
                     }
 
                     // Prepara i dati per l'aggiornamento, preservando i valori esistenti
+                    // Il CSV ha solo Fantagazzetta, gli altri campi mantengono i valori esistenti
                     const quotazioneData = {
                         giocatore_id: giocatore.id,
                         gazzetta: preserveExistingValue(gazzettaValue, existingQuotazione?.gazzetta),
-                        fascia: preserveExistingValue(row.Fascia, existingQuotazione?.fascia),
-                        consiglio: preserveExistingValue(row.Consiglio, existingQuotazione?.consiglio),
-                        voto: row.Voto && row.Voto !== '' ? parseInt(row.Voto) : existingQuotazione?.voto,
-                        mia_valutazione: row.Mia_Valutazione && row.Mia_Valutazione !== '' ? 
-                            parseInt(row.Mia_Valutazione) : existingQuotazione?.mia_valutazione,
-                        note: preserveExistingValue(row.Note, existingQuotazione?.note),
-                        preferito: row.Preferito === 'true' || row.Preferito === '1' ? 1 : 0
+                        fascia: existingQuotazione?.fascia || null,
+                        consiglio: existingQuotazione?.consiglio || null,
+                        voto: existingQuotazione?.voto || null,
+                        mia_valutazione: existingQuotazione?.mia_valutazione || null,
+                        note: existingQuotazione?.note || null,
+                        preferito: existingQuotazione?.preferito || 0
                         // fonte: 'csv_import' -- Removed: fonte column no longer exists
                     };
 
@@ -259,15 +289,16 @@ class QuotazioniService {
                         });
                     } else {
                         // Crea nuova quotazione (per nuove quotazioni, usa i valori del CSV o null)
+                        // Il CSV ha solo Fantagazzetta, gli altri campi sono null
                         const newQuotazioneData = {
                             giocatore_id: giocatore.id,
                             gazzetta: gazzettaValue || null,
-                            fascia: row.Fascia || null,
-                            consiglio: row.Consiglio || null,
-                            voto: row.Voto ? parseInt(row.Voto) : null,
-                            mia_valutazione: row.Mia_Valutazione ? parseInt(row.Mia_Valutazione) : null,
-                            note: row.Note || null,
-                            preferito: row.Preferito === 'true' || row.Preferito === '1' ? 1 : 0
+                            fascia: null,
+                            consiglio: null,
+                            voto: null,
+                            mia_valutazione: null,
+                            note: null,
+                            preferito: 0
                             // fonte: 'csv_import' -- Removed: fonte column no longer exists
                         };
                         
@@ -305,6 +336,7 @@ class QuotazioniService {
                     // NOTA: Non rimuoviamo più i giocatori dalla wishlist quando non sono marcati come preferiti nel CSV
                     // Questo evita di perdere dati della wishlist durante l'importazione di quotazioni
                 } catch (error) {
+                    console.error(`❌ Errore per riga ${JSON.stringify(row)}:`, error.message);
                     errors.push({
                         row: row,
                         error: error.message
@@ -312,6 +344,8 @@ class QuotazioniService {
                 }
             }
 
+            console.log(`✅ Importazione completata: ${results.length} operazioni, ${errors.length} errori`);
+            
             return {
                 success: true,
                 message: `Importazione completata: ${results.length} operazioni, ${errors.length} errori`,
@@ -333,6 +367,7 @@ class QuotazioniService {
     // Ottiene quotazioni con filtri
     async getQuotazioniWithFilters(filters = {}) {
         try {
+            await this.db.connect();
             let query = `
                 SELECT 
                     q.id,
