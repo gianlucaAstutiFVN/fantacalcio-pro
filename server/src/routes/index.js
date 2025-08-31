@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Determina la cartella temp da usare
-let tempDir = path.join(__dirname, '..', '..', 'temp');
+let tempDir = path.join(process.cwd(), 'temp');
 try {
   if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir, { recursive: true });

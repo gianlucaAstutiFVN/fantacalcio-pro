@@ -1,11 +1,23 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const config = require('./config');
 const routes = require('./routes');
 
 // Crea l'applicazione Express
 const app = express();
+
+// Assicurati che la cartella temp esista
+const tempDir = path.join(process.cwd(), 'temp');
+try {
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+    console.log('📁 Cartella temp globale creata:', tempDir);
+  }
+} catch (error) {
+  console.error('⚠️ Errore nella creazione della cartella temp globale:', error.message);
+}
 
 // Middleware
 app.use(express.json());

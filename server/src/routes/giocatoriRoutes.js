@@ -2,11 +2,36 @@ const express = require('express');
 const multer = require('multer');
 const router = express.Router();
 const giocatoriController = require('../controllers/giocatoriController');
+const fs = require('fs');
+const path = require('path');
+
+// Determina la cartella temp da usare
+let tempDir = path.join(process.cwd(), 'temp');
+try {
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+    console.log('📁 Cartella temp creata per giocatori:', tempDir);
+  }
+} catch (error) {
+  console.error('⚠️ Errore nella creazione della cartella temp per giocatori:', error.message);
+  // Fallback: usa la cartella temporanea del sistema
+  const os = require('os');
+  tempDir = path.join(os.tmpdir(), 'fantacalcio-giocatori');
+  try {
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
+    console.log('📁 Usando cartella temp di fallback per giocatori:', tempDir);
+  } catch (fallbackError) {
+    console.error('❌ Errore critico: impossibile creare cartella temporanea per giocatori:', fallbackError.message);
+    throw new Error('Impossibile creare cartella temporanea per i giocatori');
+  }
+}
 
 // Configurazione multer per upload file CSV
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/');
+        cb(null, tempDir);
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -27,14 +52,6 @@ const upload = multer({
         fileSize: 5 * 1024 * 1024 // 5MB max
     }
 });
-
-// Middleware per creare la cartella uploads se non esiste
-const fs = require('fs');
-const path = require('path');
-const uploadsDir = path.join(__dirname, '../../uploads');
-if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-}
 
 // GET /api/giocatori - Lista completa giocatori
 router.get('/', giocatoriController.getAllGiocatori.bind(giocatoriController));
