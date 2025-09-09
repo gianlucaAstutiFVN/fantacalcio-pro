@@ -22,8 +22,6 @@ CREATE TABLE IF NOT EXISTS quotazioni (
     consiglio TEXT,
     voto INTEGER,
     mia_valutazione INTEGER,
-    fvm INTEGER,
-    fvm_m INTEGER,
     note TEXT,
     preferito BOOLEAN DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

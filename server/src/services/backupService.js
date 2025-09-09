@@ -432,7 +432,7 @@ class BackupService {
     const order = ['squadre', 'giocatori', 'quotazioni', 'acquisti', 'wishlist'];
     
     // Colonne obsolete da filtrare durante il ripristino
-    const obsoleteColumns = ['fonte', 'pazzidifanta', 'fantacalciopedia', 'stadiosport', 'unveil', 'unveil_fvm', 'gazzetta_fascia'];
+    const obsoleteColumns = ['fonte', 'pazzidifanta', 'fantacalciopedia', 'stadiosport', 'unveil', 'unveil_fvm', 'gazzetta_fascia', 'fvm', 'fvm_m'];
     
     // Pulisci i dati prima del ripristino
     this.cleanDataForRestore(sections);

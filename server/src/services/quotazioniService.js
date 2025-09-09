@@ -18,8 +18,6 @@ class QuotazioniService {
                     q.consiglio,
                     q.voto,
                     q.mia_valutazione,
-                    q.fvm,
-                    q.fvm_m,
                     q.note,
                     q.preferito,
                     q.created_at,
@@ -81,8 +79,6 @@ class QuotazioniService {
                 consiglio,
                 voto,
                 mia_valutazione,
-                fvm,
-                fvm_m,
                 note,
                 preferito
             } = quotazioneData;
@@ -95,12 +91,12 @@ class QuotazioniService {
 
             const query = `
                 INSERT INTO quotazioni (
-                    giocatore_id, gazzetta, fascia, consiglio, voto, mia_valutazione, fvm, fvm_m, note, preferito
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    giocatore_id, gazzetta, fascia, consiglio, voto, mia_valutazione, note, preferito
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             `;
             
             const result = await this.db.run(query, [
-                giocatore_id, gazzetta, fascia, consiglio, voto, mia_valutazione, fvm, fvm_m, note, preferito
+                giocatore_id, gazzetta, fascia, consiglio, voto, mia_valutazione, note, preferito
             ]);
 
             return {
@@ -135,8 +131,6 @@ class QuotazioniService {
                 consiglio,
                 voto,
                 mia_valutazione,
-                fvm,
-                fvm_m,
                 note,
                 preferito
             } = quotazioneData;
@@ -154,8 +148,6 @@ class QuotazioniService {
                     consiglio = COALESCE(?, consiglio),
                     voto = COALESCE(?, voto),
                     mia_valutazione = COALESCE(?, mia_valutazione),
-                    fvm = COALESCE(?, fvm),
-                    fvm_m = COALESCE(?, fvm_m),
                     note = COALESCE(?, note),
                     preferito = COALESCE(?, preferito),
                     updated_at = CURRENT_TIMESTAMP
@@ -163,7 +155,7 @@ class QuotazioniService {
             `;
             
             await this.db.run(query, [
-                gazzetta, fascia, consiglio, voto, mia_valutazione, fvm, fvm_m, note, preferito, id
+                gazzetta, fascia, consiglio, voto, mia_valutazione, note, preferito, id
             ]);
 
             return {
@@ -275,19 +267,6 @@ class QuotazioniService {
                         console.log(`🔄 Usando colonna Gazzetta per ${row.Nome}: ${row.Gazzetta}`);
                     }
 
-                    // Gestione colonne FVM e FVM_M per i voti di fantacazetta
-                    let fvmValue = null;
-                    let fvmMValue = null;
-                    
-                    if (row.FVM !== null && row.FVM !== undefined && row.FVM !== '') {
-                        fvmValue = parseInt(row.FVM);
-                        console.log(`🔄 FVM per ${row.Nome}: ${fvmValue}`);
-                    }
-                    
-                    if (row['FVM M'] !== null && row['FVM M'] !== undefined && row['FVM M'] !== '') {
-                        fvmMValue = parseInt(row['FVM M']);
-                        console.log(`🔄 FVM M per ${row.Nome}: ${fvmMValue}`);
-                    }
 
                     // Prepara i dati per l'aggiornamento, preservando i valori esistenti
                     // Il CSV ha solo Fantagazzetta, gli altri campi mantengono i valori esistenti
@@ -298,8 +277,6 @@ class QuotazioniService {
                         consiglio: existingQuotazione?.consiglio || null,
                         voto: existingQuotazione?.voto || null,
                         mia_valutazione: existingQuotazione?.mia_valutazione || null,
-                        fvm: preserveExistingValue(fvmValue, existingQuotazione?.fvm),
-                        fvm_m: preserveExistingValue(fvmMValue, existingQuotazione?.fvm_m),
                         note: existingQuotazione?.note || null,
                         preferito: existingQuotazione?.preferito || 0
                         // fonte: 'csv_import' -- Removed: fonte column no longer exists
@@ -323,8 +300,6 @@ class QuotazioniService {
                             consiglio: null,
                             voto: null,
                             mia_valutazione: null,
-                            fvm: fvmValue || null,
-                            fvm_m: fvmMValue || null,
                             note: null,
                             preferito: 0
                             // fonte: 'csv_import' -- Removed: fonte column no longer exists
@@ -404,8 +379,6 @@ class QuotazioniService {
                     q.fascia,
                     q.consiglio,
                     q.mia_valutazione,
-                    q.fvm,
-                    q.fvm_m,
                     q.note,
                     q.preferito,
                     -- q.fonte, -- Removed: fonte column no longer exists

@@ -225,28 +225,15 @@ class Migration {
           gazzettaValue = row.FVM;
         }
 
-        // Gestione colonne FVM e FVM_M per i voti di fantacazetta
-        let fvmValue = null;
-        let fvmMValue = null;
-        
-        if (row.FVM !== null && row.FVM !== undefined && row.FVM !== '') {
-          fvmValue = parseInt(row.FVM);
-        }
-        
-        if (row['FVM M'] !== null && row['FVM M'] !== undefined && row['FVM M'] !== '') {
-          fvmMValue = parseInt(row['FVM M']);
-        }
 
         // Inserisci o aggiorna la quotazione
         await this.db.run(`
           INSERT OR REPLACE INTO quotazioni (
-            giocatore_id, gazzetta, fvm, fvm_m, preferito
-          ) VALUES (?, ?, ?, ?, ?)
+            giocatore_id, gazzetta, preferito
+          ) VALUES (?, ?, ?)
         `, [
           id,
           gazzettaValue,
-          fvmValue,
-          fvmMValue,
           0
         ]);
 
