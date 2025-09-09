@@ -253,6 +253,60 @@ export const useGiocatoriColumns = ({
       ),
     },
     {
+      field: 'fvm',
+      headerName: 'FVM',
+      flex: 0.6,
+      minWidth: 80,
+      type: 'number',
+      renderCell: (params) => (
+        <Typography 
+          variant="body2" 
+          color="info.main"
+          sx={{ 
+            cursor: 'pointer',
+            '&:hover': { 
+              backgroundColor: 'info.light', 
+              color: 'info.contrastText',
+              borderRadius: 1, 
+              px: 1,
+              py: 0.5
+            },
+            transition: 'all 0.2s ease-in-out'
+          }}
+          onClick={() => onEditAllFields(params.row)}
+        >
+          {params.value || '-'}
+        </Typography>
+      ),
+    },
+    {
+      field: 'fvm_m',
+      headerName: 'FVM M',
+      flex: 0.6,
+      minWidth: 80,
+      type: 'number',
+      renderCell: (params) => (
+        <Typography 
+          variant="body2" 
+          color="warning.main"
+          sx={{ 
+            cursor: 'pointer',
+            '&:hover': { 
+              backgroundColor: 'warning.light', 
+              color: 'warning.contrastText',
+              borderRadius: 1, 
+              px: 1,
+              py: 0.5
+            },
+            transition: 'all 0.2s ease-in-out'
+          }}
+          onClick={() => onEditAllFields(params.row)}
+        >
+          {params.value || '-'}
+        </Typography>
+      ),
+    },
+    {
       field: 'note',
       headerName: 'Note',
       flex: 1,

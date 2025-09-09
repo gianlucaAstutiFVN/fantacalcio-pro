@@ -136,6 +136,16 @@ async function migrateDatabase() {
         await db.run('ALTER TABLE quotazioni ADD COLUMN consiglio TEXT');
       }
       
+      if (!existingColumns.includes('fvm')) {
+        console.log('➕ Aggiungendo colonna fvm...');
+        await db.run('ALTER TABLE quotazioni ADD COLUMN fvm INTEGER');
+      }
+      
+      if (!existingColumns.includes('fvm_m')) {
+        console.log('➕ Aggiungendo colonna fvm_m...');
+        await db.run('ALTER TABLE quotazioni ADD COLUMN fvm_m INTEGER');
+      }
+      
       // La colonna voto viene creata automaticamente quando ricreiamo la tabella
       // quindi non dobbiamo aggiungerla qui
     }

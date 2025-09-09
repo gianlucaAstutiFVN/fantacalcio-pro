@@ -20,6 +20,8 @@ export interface Giocatore {
   fascia?: Fascia | null
   consiglio?: string | null
   mia_valutazione?: number | null
+  fvm?: number | null
+  fvm_m?: number | null
   note?: string | null
   preferito?: number
   fantasquadra?: string | null

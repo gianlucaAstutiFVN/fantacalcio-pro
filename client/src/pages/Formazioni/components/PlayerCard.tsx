@@ -221,6 +221,24 @@ const PlayerCard: React.FC<PlayerCardProps> = ({
               />
             )}
 
+            {giocatore.fvm && (
+              <Chip
+                label={`FVM: ${giocatore.fvm}`}
+                size="small"
+                color="info"
+                variant="outlined"
+              />
+            )}
+
+            {giocatore.fvm_m && (
+              <Chip
+                label={`FVM M: ${giocatore.fvm_m}`}
+                size="small"
+                color="warning"
+                variant="outlined"
+              />
+            )}
+
           </Box>
         </Box>
 

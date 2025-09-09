@@ -124,6 +124,9 @@ class Migration {
       // Migra giocatori dalle quotazioni 2025
       await this.migrateGiocatoriFromQuotazioni();
       
+      // Migra anche le quotazioni con i voti FVM
+      await this.migrateQuotazioniFromCSV();
+      
       // Crea squadre di esempio
       await this.createSampleSquadre();
       
@@ -188,7 +191,79 @@ class Migration {
 
   }
 
+  // Migra quotazioni dal file CSV con voti FVM
+  async migrateQuotazioniFromCSV() {
+    const dataDir = path.join(__dirname, '..', '..', '..', 'data');
+    const filePath = path.join(dataDir, 'Quotazioni_fantacalcio_2025.csv');
+    
+    if (!fs.existsSync(filePath)) {
+      console.log('📄 File CSV non trovato, salto importazione quotazioni');
+      return;
+    }
 
+    console.log('📊 Importando quotazioni con voti FVM...');
+    const giocatori = await this.readCSV(filePath);
+    
+    let imported = 0;
+    let errors = 0;
+    
+    for (const row of giocatori) {
+      try {
+        const id = `${row.Nome?.replace(/\s+/g, '_')}_${row.Squadra?.replace(/\s+/g, '_')}`.toLowerCase();
+        
+        // Verifica che il giocatore esista
+        const giocatore = await this.db.get('SELECT id FROM giocatori WHERE id = ?', [id]);
+        if (!giocatore) {
+          console.log(`⚠️ Giocatore non trovato: ${row.Nome} (${row.Squadra})`);
+          errors++;
+          continue;
+        }
+
+        // Prepara i dati per le quotazioni
+        let gazzettaValue = null;
+        if (row.FVM !== null && row.FVM !== undefined && row.FVM !== '') {
+          gazzettaValue = row.FVM;
+        }
+
+        // Gestione colonne FVM e FVM_M per i voti di fantacazetta
+        let fvmValue = null;
+        let fvmMValue = null;
+        
+        if (row.FVM !== null && row.FVM !== undefined && row.FVM !== '') {
+          fvmValue = parseInt(row.FVM);
+        }
+        
+        if (row['FVM M'] !== null && row['FVM M'] !== undefined && row['FVM M'] !== '') {
+          fvmMValue = parseInt(row['FVM M']);
+        }
+
+        // Inserisci o aggiorna la quotazione
+        await this.db.run(`
+          INSERT OR REPLACE INTO quotazioni (
+            giocatore_id, gazzetta, fvm, fvm_m, preferito
+          ) VALUES (?, ?, ?, ?, ?)
+        `, [
+          id,
+          gazzettaValue,
+          fvmValue,
+          fvmMValue,
+          0
+        ]);
+
+        imported++;
+        
+        if (imported % 50 === 0) {
+          console.log(`📊 Importate ${imported} quotazioni...`);
+        }
+        
+      } catch (error) {
+        console.error(`❌ Errore per giocatore ${row.Nome}:`, error.message);
+        errors++;
+      }
+    }
+    
+    console.log(`✅ Importazione quotazioni completata: ${imported} importate, ${errors} errori`);
+  }
 
   // Crea squadre di esempio
   async createSampleSquadre() {
