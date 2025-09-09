@@ -89,7 +89,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ customImages }) => {
   return (
     <Box sx={{ position: 'relative', width: '100%' }}>
       {/* Immagine principale */}
-      <Card sx={{ width: '100%', height: 600, position: 'relative' }}>
+      <Card sx={{ width: '100%', height: 900, position: 'relative' }}>
         <CardMedia
           component="img"
           image={images[currentIndex]}
